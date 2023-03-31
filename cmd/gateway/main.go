@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	gateway "github.com/SekyrOrg/gateway/gen"
+	gateway "github.com/SekyrOrg/openApi/gen/gateway"
 	middleware "github.com/deepmap/oapi-codegen/pkg/gin-middleware"
 	"github.com/gin-gonic/gin"
 	"net/http/httputil"

@@ -1,0 +1,440 @@
+openapi: 3.1.0
+info:
+  description: A gateway for managing different APIs
+  title: Gateway API
+  version: 1.0.0
+paths:
+  /beacons:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Beacon'
+                type: array
+          description: A list of beacons
+      summary: List all beacons
+  /beacons/{beaconId}:
+    delete:
+      responses:
+        "204":
+          description: The beacon was deleted successfully
+      summary: Delete a beacon by ID
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Beacon'
+          description: The beacon
+      summary: Get a specific beacon by ID
+    parameters:
+      - in: path
+        name: beaconId
+        required: true
+        schema:
+          example: 123e4567-e89b-12d3-a456-426655440000
+          format: uuid
+          type: string
+  /creator:
+    post:
+      parameters:
+        - $ref: '#/components/parameters/ReportAddr'
+        - $ref: '#/components/parameters/OS'
+        - $ref: '#/components/parameters/Arch'
+        - $ref: '#/components/parameters/BeaconId'
+        - $ref: '#/components/parameters/GroupId'
+        - $ref: '#/components/parameters/Static'
+        - $ref: '#/components/parameters/Upx'
+        - $ref: '#/components/parameters/UpxLevel'
+        - $ref: '#/components/parameters/Gzip'
+        - $ref: '#/components/parameters/Transport'
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              format: binary
+              type: string
+        required: true
+      responses:
+        "200":
+          content:
+            application/octet-stream:
+              schema:
+                format: binary
+                type: string
+          description: a beacon created from the submitted binary
+        "403":
+          $ref: '#/components/responses/ForbiddenError'
+      summary: Create a new beacon.
+      tags:
+        - creator
+  /groups:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Group'
+                type: array
+          description: A list of groups
+      summary: List all groups
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: The created group
+      summary: Create a new group
+  /groups/{groupId}:
+    delete:
+      responses:
+        "204":
+          description: The group was deleted successfully
+      summary: Delete a group by ID
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: The group
+      summary: Get a specific group by ID
+    parameters:
+      - in: path
+        name: groupId
+        required: true
+        schema:
+          example: 123e4567-e89b-12d3-a456-426655440000
+          format: uuid
+          type: string
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: The updated group
+      summary: Update an existing group
+  /recipients:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Recipient'
+                type: array
+          description: A list of recipients
+      summary: List all recipients
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipient'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipient'
+          description: The created recipient
+      summary: Create a new recipient
+  /recipients/{recipientId}:
+    delete:
+      responses:
+        "204":
+          description: The recipient was deleted successfully
+        "404":
+          $ref: '#/components/responses/NotFoundError'
+      summary: Delete a recipient by ID
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipient'
+          description: The recipient
+        "403":
+          $ref: '#/components/responses/ForbiddenError'
+        "404":
+          $ref: '#/components/responses/NotFoundError'
+      summary: Get a specific recipient by ID
+    parameters:
+      - in: path
+        name: recipientId
+        required: true
+        schema:
+          example: 123e4567-e89b-12d3-a456-426655440000
+          format: uuid
+          type: string
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipient'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipient'
+          description: The updated recipient
+        "403":
+          $ref: '#/components/responses/ForbiddenError'
+        "404":
+          $ref: '#/components/responses/NotFoundError'
+      summary: Update an existing recipient
+components:
+  parameters:
+    Arch:
+      description: The architecture of the beacon.
+      in: query
+      name: Arch
+      required: true
+      schema:
+        example: x86_64
+        type: string
+    BeaconId:
+      description: The UUID of the beacon.
+      in: query
+      name: BeaconId
+      schema:
+        example: 123e4567-e89b-12d3-a456-426655440000
+        format: uuid
+        type: string
+    GroupId:
+      description: The UUID of the group.
+      in: query
+      name: GroupId
+      schema:
+        example: 123e4567-e89b-12d3-a456-426655440000
+        format: uuid
+        type: string
+    Gzip:
+      description: Indicates if the beacon is compressed using Gzip.
+      in: query
+      name: Gzip
+      schema:
+        default: true
+        example: true
+        type: boolean
+    OS:
+      description: The operating system of the beacon.
+      in: query
+      name: OS
+      required: true
+      schema:
+        example: Windows
+        type: string
+    ReportAddr:
+      description: The URL of the report server.
+      in: query
+      name: ReportAddr
+      required: true
+      schema:
+        example: http://example.com/report
+        type: string
+    Static:
+      description: Indicates if the beacon is static.
+      in: query
+      name: Static
+      schema:
+        default: false
+        example: true
+        type: boolean
+    Transport:
+      description: The transport protocol used by the beacon.
+      in: query
+      name: Transport
+      schema:
+        default: dns
+        example: http
+        type: string
+    Upx:
+      description: Indicates if the beacon is compressed using UPX.
+      in: query
+      name: Upx
+      schema:
+        default: false
+        example: true
+        type: boolean
+    UpxLevel:
+      description: The compression level used by UPX.
+      in: query
+      name: UpxLevel
+      schema:
+        default: 1
+        example: 9
+        type: integer
+  responses:
+    ForbiddenError:
+      content:
+        application/json:
+          schema:
+            properties:
+              error:
+                default: Forbidden
+                example: Forbidden
+                type: string
+              message:
+                default: You are not authorized to access this resource
+                example: You are not authorized to access this resource
+                type: string
+            type: object
+      description: You are not authorized to access this resource
+    NotFoundError:
+      content:
+        application/json:
+          schema:
+            properties:
+              error:
+                default: Not Found
+                example: Not Found
+                type: string
+              message:
+                default: The requested resource was not found
+                example: The requested resource was not found
+                type: string
+            type: object
+      description: The requested resource was not found
+  schemas:
+    Beacon:
+      allOf:
+        - $ref: '#/components/schemas/TenantBaseModel'
+        - properties:
+            Arch:
+              example: x86_64
+              type: string
+            BeaconId:
+              example: 123e4567-e89b-12d3-a456-426655440000
+              format: uuid
+              type: string
+            GroupId:
+              example: 123e4567-e89b-12d3-a456-426655440000
+              format: uuid
+              type: string
+            Gzip:
+              example: true
+              type: boolean
+            OS:
+              example: Windows
+              type: string
+            ReportAddr:
+              example: http://example.com/report
+              type: string
+            Static:
+              example: true
+              type: boolean
+            Transport:
+              example: http
+              type: string
+            Upx:
+              example: true
+              type: boolean
+            UpxLevel:
+              example: 9
+              type: integer
+          type: object
+    Group:
+      allOf:
+        - $ref: '#/components/schemas/TenantBaseModel'
+        - properties:
+            Beacons:
+              items:
+                $ref: '#/components/schemas/Beacon'
+              type: array
+            Description:
+              example: A group for testing
+              type: string
+            Name:
+              example: Test Group
+              type: string
+            Priority:
+              example: 1
+              type: integer
+            Recipients:
+              items:
+                $ref: '#/components/schemas/Recipient'
+              type: array
+          type: object
+    Recipient:
+      allOf:
+        - $ref: '#/components/schemas/TenantBaseModel'
+        - properties:
+            ContactInfo:
+              example: test@example.com
+              type: string
+            Description:
+              example: A recipient for testing
+              type: string
+            Groups:
+              items:
+                $ref: '#/components/schemas/Group'
+              type: array
+            Name:
+              example: Recipient 1
+              type: string
+            Type:
+              example: Email
+              type: string
+          type: object
+    TenantBaseModel:
+      properties:
+        CreatedAt:
+          example: "2023-03-27T13:00:00Z"
+          format: date-time
+          type: string
+        DeletedAt:
+          properties:
+            Deleted:
+              example: true
+              type: boolean
+            Time:
+              example: "2023-03-27T15:00:00Z"
+              format: date-time
+              type: string
+          required:
+            - Time
+            - Deleted
+          type: object
+        ID:
+          example: 123e4567-e89b-12d3-a456-426655440000
+          format: uuid
+          type: string
+        TenantID:
+          example: 123e4567-e89b-12d3-a456-426655440000
+          format: uuid
+          type: string
+        UpdatedAt:
+          example: "2023-03-27T14:00:00Z"
+          format: date-time
+          type: string
+      type: object

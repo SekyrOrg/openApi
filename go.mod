@@ -1,4 +1,4 @@
-module github.com/SekyrOrg/gateway
+module github.com/SekyrOrg/openApi
 
 go 1.20
 

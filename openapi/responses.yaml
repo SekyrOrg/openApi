@@ -1,0 +1,33 @@
+openapi: 3.1.0
+components:
+  responses:
+    ForbiddenError:
+      description: You are not authorized to access this resource
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                default: Forbidden
+                example: Forbidden
+              message:
+                type: string
+                default: You are not authorized to access this resource
+                example: You are not authorized to access this resource
+    NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                default: Not Found
+                example: Not Found
+              message:
+                type: string
+                default: The requested resource was not found
+                example: The requested resource was not found

@@ -1,9 +1,28 @@
-gen/types:
-	oapi-codegen -package gateway -generate types -o gen/schema.gen.go sekyr-openapi.yml
-gen/server:
-	oapi-codegen -package gateway  -generate gin -o gen/server.gen.go sekyr-openapi.yml
-gen/spec:
-	oapi-codegen -package gateway  -generate spec -o gen/spec.gen.go sekyr-openapi.yml
-gen/supa:
-	oapi-codegen -package gateway -include-tags creator  -generate spec,gin,types -o gen/supa.gen.go sekyr-openapi.yml
-gen: gen/types gen/server gen/spec
+generate/responses:
+	oapi-codegen \
+    	-package responses \
+    	-generate spec,types \
+    	-o gen/responses/responses.gen.go \
+    	 openapi/responses.yaml
+generate/server:
+	oapi-codegen \
+	-package server \
+	-generate gin,types,spec \
+	-o gen/server/server.gen.go \
+	 openapi/server.yaml
+
+generate/creator:
+	oapi-codegen \
+	-package creator \
+	-generate gin,types,spec \
+	-o gen/creator/creator.gen.go \
+	 openapi/creator.yaml
+generate/gateway:
+	go run main.go
+	oapi-codegen \
+	-package gen \
+ 	-generate gin,types,spec \
+ 	-o gen/gateway/gateway.gen.go \
+ 	openapi/gateway.yaml
+
+generate: gen/types gen/server gen/spec

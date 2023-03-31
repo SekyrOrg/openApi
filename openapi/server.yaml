@@ -1,0 +1,327 @@
+openapi: 3.1.0
+info:
+  title: Beacon API
+  description: Example API for managing beacons
+  version: 1.0.0
+paths:
+  /beacons:
+    get:
+      summary: List all beacons
+      responses:
+        '200':
+          description: A list of beacons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Beacon'
+  /beacons/{beaconId}:
+    parameters:
+      - in: path
+        name: beaconId
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426655440000
+    get:
+      summary: Get a specific beacon by ID
+      responses:
+        '200':
+          description: The beacon
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Beacon'
+    delete:
+      summary: Delete a beacon by ID
+      responses:
+        '204':
+          description: The beacon was deleted successfully
+  /groups:
+    get:
+      summary: List all groups
+      responses:
+        '200':
+          description: A list of groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+    post:
+      summary: Create a new group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      responses:
+        '201':
+          description: The created group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+  /groups/{groupId}:
+    parameters:
+      - in: path
+        name: groupId
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426655440000
+    get:
+      summary: Get a specific group by ID
+      responses:
+        '200':
+          description: The group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+    put:
+      summary: Update an existing group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+      responses:
+        '200':
+          description: The updated group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+    delete:
+      summary: Delete a group by ID
+      responses:
+        '204':
+          description: The group was deleted successfully
+  /recipients:
+    get:
+      summary: List all recipients
+      responses:
+        '200':
+          description: A list of recipients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipient'
+    post:
+      summary: Create a new recipient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipient'
+      responses:
+        '201':
+          description: The created recipient
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipient'
+  /recipients/{recipientId}:
+    parameters:
+      - in: path
+        name: recipientId
+        required: true
+        schema:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426655440000
+    get:
+      summary: Get a specific recipient by ID
+      responses:
+        '200':
+          description: The recipient
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipient'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    put:
+      summary: Update an existing recipient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipient'
+      responses:
+        '200':
+          description: The updated recipient
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipient'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      summary: Delete a recipient by ID
+      responses:
+        '204':
+          description: The recipient was deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+components:
+  schemas:
+    TenantBaseModel:
+      type: object
+      properties:
+        ID:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426655440000
+        CreatedAt:
+          type: string
+          format: date-time
+          example: '2023-03-27T13:00:00Z'
+        UpdatedAt:
+          type: string
+          format: date-time
+          example: '2023-03-27T14:00:00Z'
+        DeletedAt:
+          type: object
+          properties:
+            Time:
+              type: string
+              format: date-time
+              example: '2023-03-27T15:00:00Z'
+            Deleted:
+              type: boolean
+              example: true
+          required:
+            - Time
+            - Deleted
+        TenantID:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426655440000
+    Beacon:
+      allOf:
+        - $ref: '#/components/schemas/TenantBaseModel'
+        - type: object
+          properties:
+            BeaconId:
+              type: string
+              format: uuid
+              example: 123e4567-e89b-12d3-a456-426655440000
+            GroupId:
+              type: string
+              format: uuid
+              example: 123e4567-e89b-12d3-a456-426655440000
+            OS:
+              type: string
+              example: Windows
+            Arch:
+              type: string
+              example: x86_64
+            Static:
+              type: boolean
+              example: true
+            Upx:
+              type: boolean
+              example: true
+            UpxLevel:
+              type: integer
+              example: 9
+            Gzip:
+              type: boolean
+              example: true
+            Transport:
+              type: string
+              example: http
+            ReportAddr:
+              type: string
+              example: http://example.com/report
+    Group:
+      allOf:
+        - $ref: '#/components/schemas/TenantBaseModel'
+        - type: object
+          properties:
+            Name:
+              type: string
+              example: Test Group
+            Description:
+              type: string
+              example: A group for testing
+            Priority:
+              type: integer
+              example: 1
+            Beacons:
+              type: array
+              items:
+                $ref: '#/components/schemas/Beacon'
+            Recipients:
+              type: array
+              items:
+                $ref: '#/components/schemas/Recipient'
+    Recipient:
+      allOf:
+        - $ref: '#/components/schemas/TenantBaseModel'
+        - type: object
+          properties:
+            Name:
+              type: string
+              example: Recipient 1
+            Type:
+              type: string
+              example: Email
+            ContactInfo:
+              type: string
+              example: test@example.com
+            Description:
+              type: string
+              example: A recipient for testing
+            Groups:
+              type: array
+              items:
+                $ref: '#/components/schemas/Group'
+  responses:
+    ForbiddenError:
+      description: You are not authorized to access this resource
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                default: Forbidden
+                example: Forbidden
+              message:
+                type: string
+                default: You are not authorized to access this resource
+                example: You are not authorized to access this resource
+    NotFoundError:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                default: Not Found
+                example: Not Found
+              message:
+                type: string
+                default: The requested resource was not found
+                example: The requested resource was not found
