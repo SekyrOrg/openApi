@@ -25,6 +25,16 @@ var _ creator.ServerInterface = openApi{}
 type openApi struct {
 }
 
+func (o openApi) GetDistlist(c *gin.Context) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (o openApi) GetHealthz(c *gin.Context) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (o openApi) PostCreator(c *gin.Context, params creator.PostCreatorParams) {
 	//TODO implement me
 	panic("implement me")

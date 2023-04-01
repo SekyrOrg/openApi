@@ -16,10 +16,10 @@ type OpenAPISpec struct {
 }
 
 func main() {
-	sourceFile := flag.String("s", "openapi/creator.yaml", "OpenApi Spec file to merge from (source)")
-	targetFile := flag.String("t", "openapi/server.yaml", "OpenApi Spec file to merge into (target)")
-	infoFile := flag.String("i", "openapi/gateway_info.yaml", "OpenApi file with info section to use")
-	outputFile := flag.String("o", "openapi/gateway.yaml", "Where to save the merged OpenApi Spec file")
+	sourceFile := flag.String("s", "specs/creator.yaml", "OpenApi Spec file to merge from (source)")
+	targetFile := flag.String("t", "specs/server.yaml", "OpenApi Spec file to merge into (target)")
+	infoFile := flag.String("i", "specs/gateway_info.yaml", "OpenApi file with info section to use")
+	outputFile := flag.String("o", "specs/gateway.yaml", "Where to save the merged OpenApi Spec file")
 	ignoreKeys := flag.String("ignore", "/healthz", "comma separated list of keys to ignore when merging")
 	flag.Parse()
 	// convert ignoreKeys to map

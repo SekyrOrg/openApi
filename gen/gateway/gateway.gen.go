@@ -42,6 +42,12 @@ type Beacon struct {
 	UpxLevel   *int                `json:"UpxLevel,omitempty"`
 }
 
+// Dist defines model for Dist.
+type Dist struct {
+	Arch *string `json:"arch,omitempty"`
+	Os   *string `json:"os,omitempty"`
+}
+
 // Group defines model for Group.
 type Group struct {
 	Beacons   *[]Beacon  `json:"Beacons,omitempty"`
@@ -133,34 +139,34 @@ type NotFoundError struct {
 // PostCreatorParams defines parameters for PostCreator.
 type PostCreatorParams struct {
 	// ReportAddr The URL of the report server.
-	ReportAddr ReportAddr `form:"ReportAddr" json:"ReportAddr"`
+	ReportAddr ReportAddr `form:"report_addr" json:"report_addr"`
 
-	// OS The operating system of the beacon.
-	OS OS `form:"OS" json:"OS"`
+	// Os The operating system of the beacon.
+	Os OS `form:"os" json:"os"`
 
 	// Arch The architecture of the beacon.
-	Arch Arch `form:"Arch" json:"Arch"`
+	Arch Arch `form:"arch" json:"arch"`
 
 	// BeaconId The UUID of the beacon.
-	BeaconId *BeaconId `form:"BeaconId,omitempty" json:"BeaconId,omitempty"`
+	BeaconId *BeaconId `form:"beacon_id,omitempty" json:"beacon_id,omitempty"`
 
 	// GroupId The UUID of the group.
-	GroupId *GroupId `form:"GroupId,omitempty" json:"GroupId,omitempty"`
+	GroupId *GroupId `form:"group_id,omitempty" json:"group_id,omitempty"`
 
 	// Static Indicates if the beacon is static.
-	Static *Static `form:"Static,omitempty" json:"Static,omitempty"`
+	Static *Static `form:"static,omitempty" json:"static,omitempty"`
 
 	// Upx Indicates if the beacon is compressed using UPX.
-	Upx *Upx `form:"Upx,omitempty" json:"Upx,omitempty"`
+	Upx *Upx `form:"upx,omitempty" json:"upx,omitempty"`
 
 	// UpxLevel The compression level used by UPX.
-	UpxLevel *UpxLevel `form:"UpxLevel,omitempty" json:"UpxLevel,omitempty"`
+	UpxLevel *UpxLevel `form:"upx_level,omitempty" json:"upx_level,omitempty"`
 
 	// Gzip Indicates if the beacon is compressed using Gzip.
-	Gzip *Gzip `form:"Gzip,omitempty" json:"Gzip,omitempty"`
+	Gzip *Gzip `form:"gzip,omitempty" json:"gzip,omitempty"`
 
 	// Transport The transport protocol used by the beacon.
-	Transport *Transport `form:"Transport,omitempty" json:"Transport,omitempty"`
+	Transport *Transport `form:"transport,omitempty" json:"transport,omitempty"`
 }
 
 // PostGroupsJSONRequestBody defines body for PostGroups for application/json ContentType.
@@ -189,6 +195,9 @@ type ServerInterface interface {
 	// Create a new beacon.
 	// (POST /creator)
 	PostCreator(c *gin.Context, params PostCreatorParams)
+	// List all supported OS and Arch combinations
+	// (GET /distlist)
+	GetDistlist(c *gin.Context)
 	// List all groups
 	// (GET /groups)
 	GetGroups(c *gin.Context)
@@ -290,104 +299,104 @@ func (siw *ServerInterfaceWrapper) PostCreator(c *gin.Context) {
 	// Parameter object where we will unmarshal all parameters from the context
 	var params PostCreatorParams
 
-	// ------------- Required query parameter "ReportAddr" -------------
+	// ------------- Required query parameter "report_addr" -------------
 
-	if paramValue := c.Query("ReportAddr"); paramValue != "" {
-
-	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument ReportAddr is required, but not found: %s", err), http.StatusBadRequest)
-		return
-	}
-
-	err = runtime.BindQueryParameter("form", true, true, "ReportAddr", c.Request.URL.Query(), &params.ReportAddr)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter ReportAddr: %s", err), http.StatusBadRequest)
-		return
-	}
-
-	// ------------- Required query parameter "OS" -------------
-
-	if paramValue := c.Query("OS"); paramValue != "" {
+	if paramValue := c.Query("report_addr"); paramValue != "" {
 
 	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument OS is required, but not found: %s", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Query argument report_addr is required, but not found: %s", err), http.StatusBadRequest)
 		return
 	}
 
-	err = runtime.BindQueryParameter("form", true, true, "OS", c.Request.URL.Query(), &params.OS)
+	err = runtime.BindQueryParameter("form", true, true, "report_addr", c.Request.URL.Query(), &params.ReportAddr)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter OS: %s", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter report_addr: %s", err), http.StatusBadRequest)
 		return
 	}
 
-	// ------------- Required query parameter "Arch" -------------
+	// ------------- Required query parameter "os" -------------
 
-	if paramValue := c.Query("Arch"); paramValue != "" {
+	if paramValue := c.Query("os"); paramValue != "" {
 
 	} else {
-		siw.ErrorHandler(c, fmt.Errorf("Query argument Arch is required, but not found: %s", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Query argument os is required, but not found: %s", err), http.StatusBadRequest)
 		return
 	}
 
-	err = runtime.BindQueryParameter("form", true, true, "Arch", c.Request.URL.Query(), &params.Arch)
+	err = runtime.BindQueryParameter("form", true, true, "os", c.Request.URL.Query(), &params.Os)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter Arch: %s", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter os: %s", err), http.StatusBadRequest)
 		return
 	}
 
-	// ------------- Optional query parameter "BeaconId" -------------
+	// ------------- Required query parameter "arch" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "BeaconId", c.Request.URL.Query(), &params.BeaconId)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter BeaconId: %s", err), http.StatusBadRequest)
+	if paramValue := c.Query("arch"); paramValue != "" {
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Query argument arch is required, but not found: %s", err), http.StatusBadRequest)
 		return
 	}
 
-	// ------------- Optional query parameter "GroupId" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "GroupId", c.Request.URL.Query(), &params.GroupId)
+	err = runtime.BindQueryParameter("form", true, true, "arch", c.Request.URL.Query(), &params.Arch)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter GroupId: %s", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter arch: %s", err), http.StatusBadRequest)
 		return
 	}
 
-	// ------------- Optional query parameter "Static" -------------
+	// ------------- Optional query parameter "beacon_id" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "Static", c.Request.URL.Query(), &params.Static)
+	err = runtime.BindQueryParameter("form", true, false, "beacon_id", c.Request.URL.Query(), &params.BeaconId)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter Static: %s", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter beacon_id: %s", err), http.StatusBadRequest)
 		return
 	}
 
-	// ------------- Optional query parameter "Upx" -------------
+	// ------------- Optional query parameter "group_id" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "Upx", c.Request.URL.Query(), &params.Upx)
+	err = runtime.BindQueryParameter("form", true, false, "group_id", c.Request.URL.Query(), &params.GroupId)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter Upx: %s", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter group_id: %s", err), http.StatusBadRequest)
 		return
 	}
 
-	// ------------- Optional query parameter "UpxLevel" -------------
+	// ------------- Optional query parameter "static" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "UpxLevel", c.Request.URL.Query(), &params.UpxLevel)
+	err = runtime.BindQueryParameter("form", true, false, "static", c.Request.URL.Query(), &params.Static)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter UpxLevel: %s", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter static: %s", err), http.StatusBadRequest)
 		return
 	}
 
-	// ------------- Optional query parameter "Gzip" -------------
+	// ------------- Optional query parameter "upx" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "Gzip", c.Request.URL.Query(), &params.Gzip)
+	err = runtime.BindQueryParameter("form", true, false, "upx", c.Request.URL.Query(), &params.Upx)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter Gzip: %s", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter upx: %s", err), http.StatusBadRequest)
 		return
 	}
 
-	// ------------- Optional query parameter "Transport" -------------
+	// ------------- Optional query parameter "upx_level" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "Transport", c.Request.URL.Query(), &params.Transport)
+	err = runtime.BindQueryParameter("form", true, false, "upx_level", c.Request.URL.Query(), &params.UpxLevel)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter Transport: %s", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter upx_level: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "gzip" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "gzip", c.Request.URL.Query(), &params.Gzip)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter gzip: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "transport" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "transport", c.Request.URL.Query(), &params.Transport)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter transport: %s", err), http.StatusBadRequest)
 		return
 	}
 
@@ -396,6 +405,16 @@ func (siw *ServerInterfaceWrapper) PostCreator(c *gin.Context) {
 	}
 
 	siw.Handler.PostCreator(c, params)
+}
+
+// GetDistlist operation middleware
+func (siw *ServerInterfaceWrapper) GetDistlist(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.GetDistlist(c)
 }
 
 // GetGroups operation middleware
@@ -601,6 +620,8 @@ func RegisterHandlersWithOptions(router *gin.Engine, si ServerInterface, options
 
 	router.POST(options.BaseURL+"/creator", wrapper.PostCreator)
 
+	router.GET(options.BaseURL+"/distlist", wrapper.GetDistlist)
+
 	router.GET(options.BaseURL+"/groups", wrapper.GetGroups)
 
 	router.POST(options.BaseURL+"/groups", wrapper.PostGroups)
@@ -627,35 +648,36 @@ func RegisterHandlersWithOptions(router *gin.Engine, si ServerInterface, options
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/8xZXXPaPBb+KxrtXkIwCcnbcrW0aTPMdJtMk8x+dDI7wj6AOrblSnITyvDfdyTZRjYy",
-	"Fk1CexVsHx095zmfUtY4ZEnGUkilwOM1zggnCUjg+mnCw6X6G4EIOc0kZSke47slIMLDJZUQypwDYnMk",
-	"l4BmQEKWnuAepkrsew58hXs4JQngsdHVwxy+55RDhMeS59DDIlxCQtQm8ESSLFaiT28u/ncxwj0sV5l6",
-	"FpLTdIE3mx5+p/eYRm5U9/fTSz80lR43guHpGYzOL/7qw5u3s/7wNDrrk9H5RX90enFxfj4aBUEQ4B6e",
-	"M54Qicc4z2nkxHvFWZ75wF0owTa0pZbXBvuTZrtIp2lEQyJBIGozi6hAKnY4CAERygVNF0hpaDVCabct",
-	"iGBO8liWkVAZZB4LeDPGYiCpxnd96+aRZcCJVPuLlZCQ+IXA9a1nOP6LphF7FE7KvkDGuJxEEW9x8ZdP",
-	"JRquRZEA/gN4GyhLnx+4pZTZeDAoXpyELBmYjZxwbyWRNDzIx0IvacNbKHS6dU5i4eXXO05SoTE7OZTl",
-	"Z5RxJlnIYpSrkJutPLy81e3EiKNUObbOp5O6++zpeblxf/PvNpBK9/MovM+ePsEPiN0MllgoS1GsxCoC",
-	"94MyKp3IhhaqtxUkmkpYAMcbhYmDyFgqQLeSj4zPaBRB+oFzppMlZKmEVPucZFmseKQsHXwTCvba2jPj",
-	"KsElNYqgXL/1YaW75kn7bcOdPZyAEGQBdT3/YTkiHFDKJCK5XDJOf0KEJEMkDEEIJJdUIA6C5TyE2mYH",
-	"L90NsOINm32DUBoG6548cI9ND39m8iPL0+gVOP/MJNK6azTYb/04v9OV8XsOQkJUgUePRGg75ztbeC74",
-	"BX69NKtlhibNjJkjNJ9xfD3H469r/HcOczzGfxtsR6tBsWRwBylJ5Tsi4J8sghhvek2uy5mrexyqT0Mv",
-	"PQ/UZpdXUF7MGh2lrWz6Ht242Yx/qUfaLbITWq1vdbWQqoN0qrVr+d4auxPTD6XXXjIgTZDpn1RCon/s",
-	"01ikxBYd4Zys1POlnW42YxMz/qI540iCUKOci8DPujHZC+9ASGQsdsjfcMo4lavamuEukSpyQprR8hDk",
-	"ZWa1ZNdSt2O2C17QOe9ZKkkop+mc1ZlRNP7DingXP3v8wUuwXT7R5PuzZnzliI1d31Z8oaFr4zv9wl7w",
-	"ISE09in9yhtNand63nsOREI0aST3aXB61g/O+qd/3Q3PxkEwDoL/2vUuIhL6kibgJjyGSmd9u+KTX92h",
-	"Ta5sVOeHodrY54yvRneFFD/skNfD08vXaQnGJa+l/T6Luvw5Opg5x0xBi1SszxYTtCASHslK51NCUrJQ",
-	"Z4KIzufAU4kmN1Pd0qjUqK4K4cnNFPfwD+DCqBmeBCeBsoZlkJKM4jE+OxmeKAIyIpc6kgazbcFegDa3",
-	"OCCbUQFfgSxremNIPw2Cg6bEZ/WD3QFsgmIqpDovlyboaStPEsJXeIw/qa8kjmufS3MH61kxDW0M/SqA",
-	"d403gV3Yb90CNXgYuQ9SxfFOjYRmgwiJXA/f8zyOVw28Zi9EymWzFZpeKiI63NIO6zD3+HjFPQbPyq+2",
-	"OVcgEUEig5DOabhjlH11+HVtjpQqKLcnypltV/fVxgvda6lqPwhVNTdnmIwJB/s3TMj3hdCOLS4ityID",
-	"a+5UHbpD+vrWR0ofAzzkqljxkC0Heg/RYgr2kFRTrZ+YGWp9cKqzgYfcdv7ePJiQAiHfsWi1J0tYKEH2",
-	"heRAknq2VHE0oynRFyHNSNo043ZzUII+c+t6llZFJTRzCppzlugrKJHPEirVq0LbpodHwVlbQagMGDSu",
-	"aOrJb8YhRFAKj9aVmyQLlSK4zK8HXZIX1VDYVumKsfEY/adl5NzXfgr8Ld2n/NrbU0os+3yi8rDaXVjk",
-	"E4/D19jUccFYBOGiEGqNnK1AESSD9cJUJY+ubUjd/jPEr2ebo+WhLdus6uzYHZCC49Dvor3RrRv2dDfr",
-	"hWXT8Xp1D2e5K6VyB9O/NbGO5NncnFqcHjYnGkRSBE9UH9Dt9OK1K422+LUuPo5Ri/ddmuypx5YtLTXZ",
-	"lthXlxv2vnwIWRYetz43Nm6v0dwSbK3TdSErmAbr6rdXzd4S/mW7zrt2b6+h2uu3mm5G3dNN/X8hLVV/",
-	"u19n5fc0LDieg7mdXL808b0AlY224yC0u/XwBqF/Qvtpd/dvryFHDLGyHf0Roebof3bZ2mz+HwAA//+l",
-	"EoNj3SQAAA==",
+	"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",
+	"ymVrvf4vAAD//xJ4VruZJgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

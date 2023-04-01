@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  description: A gateway for managing different APIs
+  description: A gateway for managing differnt APIs
   title: Gateway API
   version: 1.0.0
 paths:
@@ -72,6 +72,20 @@ paths:
       summary: Create a new beacon.
       tags:
         - creator
+  /distlist:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Dist'
+                type: array
+          description: A list of supported OS and Arch combinations
+      summary: List all supported OS and Arch combinations
+      tags:
+        - distlist
   /groups:
     get:
       responses:
@@ -217,7 +231,7 @@ components:
     Arch:
       description: The architecture of the beacon.
       in: query
-      name: Arch
+      name: arch
       required: true
       schema:
         example: x86_64
@@ -225,15 +239,23 @@ components:
     BeaconId:
       description: The UUID of the beacon.
       in: query
-      name: BeaconId
+      name: beacon_id
       schema:
         example: 123e4567-e89b-12d3-a456-426655440000
         format: uuid
         type: string
+    Debug:
+      description: Include debug information in the beacon
+      in: query
+      name: debug
+      schema:
+        default: true
+        example: true
+        type: boolean
     GroupId:
       description: The UUID of the group.
       in: query
-      name: GroupId
+      name: group_id
       schema:
         example: 123e4567-e89b-12d3-a456-426655440000
         format: uuid
@@ -241,7 +263,7 @@ components:
     Gzip:
       description: Indicates if the beacon is compressed using Gzip.
       in: query
-      name: Gzip
+      name: gzip
       schema:
         default: true
         example: true
@@ -249,7 +271,7 @@ components:
     OS:
       description: The operating system of the beacon.
       in: query
-      name: OS
+      name: os
       required: true
       schema:
         example: Windows
@@ -257,7 +279,7 @@ components:
     ReportAddr:
       description: The URL of the report server.
       in: query
-      name: ReportAddr
+      name: report_addr
       required: true
       schema:
         example: http://example.com/report
@@ -265,7 +287,7 @@ components:
     Static:
       description: Indicates if the beacon is static.
       in: query
-      name: Static
+      name: static
       schema:
         default: false
         example: true
@@ -273,7 +295,7 @@ components:
     Transport:
       description: The transport protocol used by the beacon.
       in: query
-      name: Transport
+      name: transport
       schema:
         default: dns
         example: http
@@ -281,7 +303,7 @@ components:
     Upx:
       description: Indicates if the beacon is compressed using UPX.
       in: query
-      name: Upx
+      name: upx
       schema:
         default: false
         example: true
@@ -289,7 +311,7 @@ components:
     UpxLevel:
       description: The compression level used by UPX.
       in: query
-      name: UpxLevel
+      name: upx_level
       schema:
         default: 1
         example: 9
@@ -363,6 +385,15 @@ components:
               example: 9
               type: integer
           type: object
+    Dist:
+      properties:
+        arch:
+          example: x86_64
+          type: string
+        os:
+          example: Windows
+          type: string
+      type: object
     Group:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'

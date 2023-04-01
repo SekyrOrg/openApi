@@ -4,6 +4,20 @@ info:
   description: Example API for managing beacons
   version: 1.0.0
 paths:
+  /distlist:
+    get:
+      summary: List all supported OS and Arch combinations
+      tags:
+        - distlist
+      responses:
+        '200':
+          description: A list of supported OS and Arch combinations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dist'
   /creator:
     post:
       summary: Create a new beacon.
@@ -35,8 +49,8 @@ paths:
               schema:
                 type: string
                 format: binary
-        '500':
-          $ref: '#/components/responses/NotHealtyError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
   /healthz:
     get:
       summary: Check the health of the server.
@@ -54,12 +68,13 @@ paths:
                     type: string
                     default: Healthy
                     example: Healthy
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          description: The server is not healthy
+
 components:
   parameters:
     ReportAddr:
-      name: ReportAddr
+      name: report_addr
       in: query
       description: The URL of the report server.
       required: true
@@ -67,7 +82,7 @@ components:
         type: string
         example: http://example.com/report
     OS:
-      name: OS
+      name: os
       in: query
       description: The operating system of the beacon.
       required: true
@@ -75,7 +90,7 @@ components:
         type: string
         example: Windows
     Arch:
-      name: Arch
+      name: arch
       in: query
       description: The architecture of the beacon.
       required: true
@@ -83,7 +98,7 @@ components:
         type: string
         example: x86_64
     BeaconId:
-      name: BeaconId
+      name: beacon_id
       in: query
       description: The UUID of the beacon.
       schema:
@@ -91,7 +106,7 @@ components:
         format: uuid
         example: "123e4567-e89b-12d3-a456-426655440000"
     GroupId:
-      name: GroupId
+      name: group_id
       in: query
       description: The UUID of the group.
       schema:
@@ -99,7 +114,7 @@ components:
         format: uuid
         example: "123e4567-e89b-12d3-a456-426655440000"
     Static:
-      name: Static
+      name: static
       in: query
       description: Indicates if the beacon is static.
       schema:
@@ -107,7 +122,7 @@ components:
         default: false
         example: true
     Upx:
-      name: Upx
+      name: upx
       in: query
       description: Indicates if the beacon is compressed using UPX.
       schema:
@@ -115,7 +130,7 @@ components:
         default: false
         example: true
     UpxLevel:
-      name: UpxLevel
+      name: upx_level
       in: query
       description: The compression level used by UPX.
       schema:
@@ -123,15 +138,23 @@ components:
         default: 1
         example: 9
     Gzip:
-      name: Gzip
+      name: gzip
       in: query
       description: Indicates if the beacon is compressed using Gzip.
       schema:
         type: boolean
         default: true
         example: true
+    Debug:
+      name: debug
+      in: query
+      description:  Include debug information in the beacon
+      schema:
+        type: boolean
+        default: true
+        example: true
     Transport:
-      name: Transport
+      name: transport
       in: query
       description: The transport protocol used by the beacon.
       schema:
@@ -169,18 +192,13 @@ components:
                 type: string
                 default: The requested resource was not found
                 example: The requested resource was not found
-    NotHealtyError:
-        description: The server is not healthy
-        content:
-            application/json:
-            schema:
-                type: object
-                properties:
-                error:
-                    type: string
-                    default: Not Healthy
-                    example: Not Healthy
-                message:
-                    type: string
-                    default: The server is not healthy
-                    example: The server is not healthy
+  schemas:
+    Dist:
+      type: object
+      properties:
+        os:
+          type: string
+          example: Windows
+        arch:
+          type: string
+          example: x86_64
