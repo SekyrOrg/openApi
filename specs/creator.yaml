@@ -34,6 +34,7 @@ paths:
             - $ref: '#/components/parameters/UpxLevel'
             - $ref: '#/components/parameters/Gzip'
             - $ref: '#/components/parameters/Debug'
+            - $ref: '#/components/parameters/Lldflags'
             - $ref: '#/components/parameters/Transport'
       requestBody:
         required: true
@@ -161,6 +162,14 @@ components:
       schema:
         type: string
         default: dns
+        example: http
+    Lldflags:
+      name: lldflags
+      in: query
+      description: The lldflags used to build the beacon.
+      schema:
+        type: string
+        default: -s -w
         example: http
   responses:
     ForbiddenError:
