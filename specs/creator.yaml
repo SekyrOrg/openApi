@@ -33,6 +33,7 @@ paths:
             - $ref: '#/components/parameters/Upx'
             - $ref: '#/components/parameters/UpxLevel'
             - $ref: '#/components/parameters/Gzip'
+            - $ref: '#/components/parameters/Debug'
             - $ref: '#/components/parameters/Transport'
       requestBody:
         required: true
