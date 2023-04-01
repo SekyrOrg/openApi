@@ -16,15 +16,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Beacon'
-  /beacons/{beaconId}:
+  /beacons/{id}:
     parameters:
-      - in: path
-        name: beaconId
-        required: true
-        schema:
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426655440000
+        - $ref: '#/components/parameters/id'
     get:
       summary: Get a specific beacon by ID
       responses:
@@ -39,71 +33,6 @@ paths:
       responses:
         '204':
           description: The beacon was deleted successfully
-  /groups:
-    get:
-      summary: List all groups
-      responses:
-        '200':
-          description: A list of groups
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Group'
-    post:
-      summary: Create a new group
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Group'
-      responses:
-        '201':
-          description: The created group
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Group'
-  /groups/{groupId}:
-    parameters:
-      - in: path
-        name: groupId
-        required: true
-        schema:
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426655440000
-    get:
-      summary: Get a specific group by ID
-      responses:
-        '200':
-          description: The group
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Group'
-    put:
-      summary: Update an existing group
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Group'
-      responses:
-        '200':
-          description: The updated group
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Group'
-    delete:
-      summary: Delete a group by ID
-      responses:
-        '204':
-          description: The group was deleted successfully
   /recipients:
     get:
       summary: List all recipients
@@ -123,7 +52,27 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Recipient'
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the recipient
+                type:
+                  type: string
+                  description: The type of the recipient
+                  enum:
+                    - email
+                    - slack
+                    - pagerduty
+                ContactInfo:
+                  type: string
+                  description: The contact information for the recipient
+                group_ids:
+                  type: array
+                  items:
+                      type: string
+                      format: uuid
+                  description: An array of group IDs to add the recipient to
       responses:
         '201':
           description: The created recipient
@@ -131,15 +80,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Recipient'
-  /recipients/{recipientId}:
+  /recipients/{id}:
     parameters:
-      - in: path
-        name: recipientId
-        required: true
-        schema:
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426655440000
+      - $ref: '#/components/parameters/id'
     get:
       summary: Get a specific recipient by ID
       responses:
@@ -150,9 +93,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Recipient'
         '403':
-          $ref: '#/components/responses/ForbiddenError'
+          $ref: '#/components/responses/Error'
         '404':
-          $ref: '#/components/responses/NotFoundError'
+          $ref: '#/components/responses/Error'
     put:
       summary: Update an existing recipient
       requestBody:
@@ -160,7 +103,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Recipient'
+                type: object
+                properties:
+                    name:
+                      type: string
+                      description: The name of the recipient
+                    type:
+                      type: string
+                      description: The type of the recipient
+                      enum:
+                        - email
+                        - slack
+                        - pagerduty
+                    ContactInfo:
+                      type: string
+                      description: The contact information for the recipient
       responses:
         '200':
           description: The updated recipient
@@ -169,17 +126,145 @@ paths:
               schema:
                 $ref: '#/components/schemas/Recipient'
         '403':
-          $ref: '#/components/responses/ForbiddenError'
+          $ref: '#/components/responses/Error'
         '404':
-          $ref: '#/components/responses/NotFoundError'
+          $ref: '#/components/responses/Error'
     delete:
       summary: Delete a recipient by ID
       responses:
         '204':
           description: The recipient was deleted successfully
         '404':
-          $ref: '#/components/responses/NotFoundError'
-
+          $ref: '#/components/responses/Error'
+  /groups:
+    get:
+      summary: List all groups
+      responses:
+        '200':
+          description: A list of groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+    post:
+      summary: Create a new group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the group
+                description:
+                  type: string
+                  description: The description of the group
+                recipient_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: An array of recipient IDs to add to the group
+      responses:
+        '201':
+          description: The created group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+  /groups/{id}:
+    get:
+      summary: Retrieve a specific group by ID
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: The group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        '404':
+          $ref: '#/components/responses/Error'
+    put:
+      summary: Update a group's name, description, and recipient list
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the group
+                description:
+                  type: string
+                  description: The description of the group
+                recipient_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: An array of recipient IDs to add to the group
+      responses:
+        '200':
+          description: The updated group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+    delete:
+      summary: Delete a group by ID
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          description: No Content
+  /groups/{id}/recipients:
+    post:
+      summary: Add a recipient to a group
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipient_id:
+                  type: string
+                  format: uuid
+                  description: The ID of the recipient to add to the group
+      responses:
+        '201':
+          description: A list of recipients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipient'
+    parameters:
+      - $ref: '#/components/parameters/id'
+  /groups/{id}/recipients/{recipient_id}:
+    delete:
+      summary: Remove a recipient from a group
+      parameters:
+        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/sub_id'
+      responses:
+        '204':
+          description: No Content
+        '404':
+          $ref: '#/components/responses/Error'
 components:
   schemas:
     TenantBaseModel:
@@ -295,33 +380,89 @@ components:
               items:
                 $ref: '#/components/schemas/Group'
   responses:
-    ForbiddenError:
-      description: You are not authorized to access this resource
+    Error:
+      description: An error occurred
       content:
         application/json:
           schema:
             type: object
             properties:
-              error:
+              code:
                 type: string
-                default: Forbidden
-                example: Forbidden
+                example: invalid_request
+                description: A unique error code for the specific type of error
               message:
                 type: string
-                default: You are not authorized to access this resource
-                example: You are not authorized to access this resource
-    NotFoundError:
-      description: The requested resource was not found
+                example: Invalid request parameters
+                description: A human-readable error message describing the error
+            required:
+              - code
+              - message
+  requestBodies:
+    CreateGroup:
+      description: Create a new group
       content:
         application/json:
           schema:
             type: object
             properties:
-              error:
+              name:
                 type: string
-                default: Not Found
-                example: Not Found
-              message:
+                minLength: 2
+                maxLength: 50
+                example: My Group
+              description:
                 type: string
-                default: The requested resource was not found
-                example: The requested resource was not found
+                example: A description of my resource
+              recipientIds:
+                type: array
+                items:
+                  type: string
+                example: [ "123e4567-e89b-12d3-a456-426655440000", "123e4567-e89b-12d3-a456-426655440001" ]
+            required:
+              - name
+              - description
+    UpdateGroup:
+      description: Update an existing group
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                minLength: 2
+                maxLength: 50
+                example: New Group Name
+              description:
+                type: string
+                example: A new description of my resource
+              recipientIds:
+                type: array
+                items:
+                  type: string
+                example: [ "123e4567-e89b-12d3-a456-426655440000", "123e4567-e89b-12d3-a456-426655440001" ]
+            required:
+              - name
+              - description
+  parameters:
+    id:
+      name: id
+      in: path
+      description: The UUID identifier of the resource
+      required: true
+      schema:
+        type: string
+        format: uuid
+        description: Unique identifier of the resource in UUID format
+      example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+    sub_id:
+      name: sub_id
+      in: path
+      description: The UUID identifier of the sub-resource
+      required: true
+      schema:
+        type: string
+        format: uuid
+        description: Unique identifier of the sub-resource in UUID format
+      example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
