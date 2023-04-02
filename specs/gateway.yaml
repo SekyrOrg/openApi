@@ -17,6 +17,8 @@ paths:
           description: A list of beacons
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: List all beacons
       tags:
         - beacons
@@ -27,6 +29,8 @@ paths:
           description: The beacon was deleted successfully
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: Delete a beacon by ID
       tags:
         - beacons
@@ -40,6 +44,8 @@ paths:
           description: The beacon
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: Get a specific beacon by ID
       tags:
         - beacons
@@ -77,6 +83,8 @@ paths:
           description: a beacon created from the submitted binary
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: Create a new beacon.
       tags:
         - creator
@@ -93,6 +101,8 @@ paths:
           description: A list of supported OS and Arch combinations
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: List all supported OS and Arch combinations
       tags:
         - creator
@@ -109,6 +119,8 @@ paths:
           description: A list of groups
         "404":
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: List all groups
       tags:
         - groups
@@ -146,19 +158,17 @@ paths:
         - groups
   /groups/{id}:
     delete:
-      parameters:
-        - $ref: '#/components/parameters/id'
       responses:
         "204":
           description: No Content
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: Delete a group by ID
       tags:
         - groups
     get:
-      parameters:
-        - $ref: '#/components/parameters/id'
       responses:
         "200":
           content:
@@ -168,12 +178,14 @@ paths:
           description: The group
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: Retrieve a specific group by ID
       tags:
         - groups
+    parameters:
+      - $ref: '#/components/parameters/id'
     put:
-      parameters:
-        - $ref: '#/components/parameters/id'
       requestBody:
         content:
           application/json:
@@ -202,6 +214,8 @@ paths:
           description: The updated group
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: Update a group's name, description, and recipient list
       tags:
         - groups
@@ -209,8 +223,6 @@ paths:
     parameters:
       - $ref: '#/components/parameters/id'
     post:
-      parameters:
-        - $ref: '#/components/parameters/id'
       requestBody:
         content:
           application/json:
@@ -233,22 +245,26 @@ paths:
           description: A list of recipients
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: Add a recipient to a group
       tags:
         - groups
-  /groups/{id}/recipients/{recipient_id}:
+  /groups/{id}/recipients/{sub_id}:
     delete:
-      parameters:
-        - $ref: '#/components/parameters/id'
-        - $ref: '#/components/parameters/sub_id'
       responses:
         "204":
           description: No Content
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: Remove a recipient from a group
       tags:
         - groups
+    parameters:
+      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/sub_id'
   /recipients:
     get:
       responses:
@@ -262,6 +278,8 @@ paths:
           description: A list of recipients
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: List all recipients
       tags:
         - recipients
@@ -301,6 +319,8 @@ paths:
           description: The created recipient
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: Create a new recipient
       tags:
         - recipients
@@ -311,6 +331,8 @@ paths:
           description: The recipient was deleted successfully
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: Delete a recipient by ID
       tags:
         - recipients
@@ -324,6 +346,8 @@ paths:
           description: The recipient
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: Get a specific recipient by ID
       tags:
         - recipients
@@ -359,6 +383,8 @@ paths:
           description: The updated recipient
         default:
           $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
       summary: Update an existing recipient
       tags:
         - recipients
@@ -672,6 +698,15 @@ components:
           format: date-time
           type: string
       type: object
+  securitySchemes:
+    apiKeyAuth:
+      in: header
+      name: X-API-Key
+      type: apiKey
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
 tags:
   - description: Endpoints related to beacons
     name: beacons
