@@ -3,10 +3,19 @@ info:
   title: Beacon API
   description: Example API for managing beacons
   version: 1.0.0
+tags:
+  - name: beacons
+    description: Endpoints related to beacons
+  - name: recipients
+    description: Endpoints related to recipients
+  - name: groups
+    description: Endpoints related to groups
 paths:
   /beacons:
     get:
       summary: List all beacons
+      tags:
+        - beacons
       responses:
         '200':
           description: A list of beacons
@@ -16,11 +25,15 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Beacon'
+        default:
+            $ref: '#/components/responses/Error'
   /beacons/{id}:
     parameters:
         - $ref: '#/components/parameters/id'
     get:
       summary: Get a specific beacon by ID
+      tags:
+        - beacons
       responses:
         '200':
           description: The beacon
@@ -28,14 +41,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Beacon'
+        default:
+          $ref: '#/components/responses/Error'
     delete:
       summary: Delete a beacon by ID
+      tags:
+        - beacons
       responses:
         '204':
           description: The beacon was deleted successfully
+        default:
+          $ref: '#/components/responses/Error'
   /recipients:
     get:
       summary: List all recipients
+      tags:
+        - recipients
       responses:
         '200':
           description: A list of recipients
@@ -45,8 +66,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Recipient'
+        default:
+          $ref: '#/components/responses/Error'
     post:
       summary: Create a new recipient
+      tags:
+        - recipients
       requestBody:
         required: true
         content:
@@ -80,11 +105,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Recipient'
+        default:
+          $ref: '#/components/responses/Error'
   /recipients/{id}:
     parameters:
       - $ref: '#/components/parameters/id'
     get:
       summary: Get a specific recipient by ID
+      tags:
+        - recipients
       responses:
         '200':
           description: The recipient
@@ -92,12 +121,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Recipient'
-        '403':
-          $ref: '#/components/responses/Error'
-        '404':
+        default:
           $ref: '#/components/responses/Error'
     put:
       summary: Update an existing recipient
+      tags:
+        - recipients
       requestBody:
         required: true
         content:
@@ -125,20 +154,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Recipient'
-        '403':
-          $ref: '#/components/responses/Error'
-        '404':
+        default:
           $ref: '#/components/responses/Error'
     delete:
       summary: Delete a recipient by ID
+      tags:
+        - recipients
       responses:
         '204':
           description: The recipient was deleted successfully
-        '404':
+        default:
           $ref: '#/components/responses/Error'
   /groups:
     get:
       summary: List all groups
+      tags:
+        - groups
       responses:
         '200':
           description: A list of groups
@@ -148,8 +179,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Group'
+        '404':
+          $ref: '#/components/responses/Error'
     post:
       summary: Create a new group
+      tags:
+        - groups
       requestBody:
         required: true
         content:
@@ -176,9 +211,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Group'
+        '404':
+          $ref: '#/components/responses/Error'
   /groups/{id}:
     get:
       summary: Retrieve a specific group by ID
+      tags:
+        - groups
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
@@ -188,10 +227,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Group'
-        '404':
+        default:
           $ref: '#/components/responses/Error'
     put:
       summary: Update a group's name, description, and recipient list
+      tags:
+        - groups
       parameters:
         - $ref: '#/components/parameters/id'
       requestBody:
@@ -220,16 +261,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Group'
+        default:
+          $ref: '#/components/responses/Error'
     delete:
       summary: Delete a group by ID
+      tags:
+        - groups
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         '204':
           description: No Content
+        default:
+          $ref: '#/components/responses/Error'
   /groups/{id}/recipients:
     post:
       summary: Add a recipient to a group
+      tags:
+        - groups
       parameters:
         - $ref: '#/components/parameters/id'
       requestBody:
@@ -252,19 +301,24 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Recipient'
+        default:
+          $ref: '#/components/responses/Error'
     parameters:
       - $ref: '#/components/parameters/id'
   /groups/{id}/recipients/{recipient_id}:
     delete:
       summary: Remove a recipient from a group
+      tags:
+        - groups
       parameters:
         - $ref: '#/components/parameters/id'
         - $ref: '#/components/parameters/sub_id'
       responses:
         '204':
           description: No Content
-        '404':
+        default:
           $ref: '#/components/responses/Error'
+
 components:
   schemas:
     TenantBaseModel:

@@ -9,10 +9,11 @@ import (
 )
 
 type OpenAPISpec struct {
-	OpenAPI    string                 `yaml:"openapi"`
-	Info       map[string]interface{} `yaml:"info"`
-	Paths      map[string]interface{} `yaml:"paths"`
-	Components map[string]interface{} `yaml:"components"`
+	OpenAPI    string                   `yaml:"openapi"`
+	Info       map[string]interface{}   `yaml:"info"`
+	Paths      map[string]interface{}   `yaml:"paths"`
+	Components map[string]interface{}   `yaml:"components"`
+	Tags       []map[string]interface{} `yaml:"tags"`
 }
 
 func main() {
@@ -44,7 +45,7 @@ func Run(sourceFile, targetFile, infoFile, resultFile string, ignoreKeys map[str
 	if infoFile != "" {
 		infoData, err := ParseSpecFile(infoFile)
 		if err != nil {
-			return fmt.Errorf("error parsing info file: %s", err)
+			return fmt.Errorf("error parsing info file, %s, error: %s", infoFile)
 		}
 		// overwrite the info section
 		targetData.Info = infoData.Info
@@ -89,11 +90,11 @@ func ParseSpecFile(specFile string) (*OpenAPISpec, error) {
 func ParseSpecFiles(sourceFile string, targetFile string) (*OpenAPISpec, *OpenAPISpec, error) {
 	sourceData, err := ParseSpecFile(sourceFile)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error parsing source file: %s", err)
+		return nil, nil, fmt.Errorf("error parsing source file:%s, error: %s", sourceFile, err)
 	}
 	targetData, err := ParseSpecFile(targetFile)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error parsing target file: %s", err)
+		return nil, nil, fmt.Errorf("error parsing target file:%s, error: %s", targetFile, err)
 	}
 	return sourceData, targetData, nil
 }
@@ -101,6 +102,13 @@ func ParseSpecFiles(sourceFile string, targetFile string) (*OpenAPISpec, *OpenAP
 func mergeOpenApiSpec(source *OpenAPISpec, target *OpenAPISpec, ignoreKeys map[string]any) {
 	merge(source.Components, target.Components, ignoreKeys)
 	merge(source.Paths, target.Paths, ignoreKeys)
+	mergeTags(source.Tags, target.Tags, ignoreKeys)
+
+}
+func mergeTags(source []map[string]interface{}, target []map[string]interface{}, ignoreKeys map[string]any) {
+	for _, value := range source {
+		target = append(target, value)
+	}
 }
 
 func merge(source map[string]interface{}, target map[string]interface{}, ignoreKeys map[string]any) {
