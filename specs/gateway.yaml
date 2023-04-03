@@ -22,18 +22,7 @@ paths:
       summary: List all beacons
       tags:
         - beacons
-  /beacons/{id}:
-    delete:
-      responses:
-        "204":
-          description: The beacon was deleted successfully
-        default:
-          $ref: '#/components/responses/Error'
-      security:
-        - bearerAuth: [ ]
-      summary: Delete a beacon by ID
-      tags:
-        - beacons
+  /beacons/{beaconId}:
     get:
       responses:
         "200":
@@ -45,12 +34,12 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: Get a specific beacon by ID
       tags:
         - beacons
     parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/beaconId'
   /creator:
     post:
       parameters:
@@ -84,11 +73,11 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: Create a new beacon.
       tags:
-        - creator
-  /distlist:
+        - Creator
+  /creator/distlist:
     get:
       responses:
         "200":
@@ -102,10 +91,66 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: List all supported OS and Arch combinations
       tags:
-        - creator
+        - Creator
+  /events/{eventId}:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: The event
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
+      summary: Retrieve a specific event by ID
+      tags:
+        - events
+    parameters:
+      - $ref: '#/components/parameters/eventId'
+  /events/{eventId}/group:
+    get:
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: The group
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
+      summary: Retrieve the group for a specific event
+      tags:
+        - events
+    parameters:
+      - $ref: '#/components/parameters/eventId'
+  /events/{eventId}/recipients:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Recipient'
+                type: array
+          description: A list of recipients
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
+      summary: Retrieve a list of recipients for a specific event
+      tags:
+        - events
+    parameters:
+      - $ref: '#/components/parameters/eventId'
   /groups:
     get:
       responses:
@@ -120,7 +165,7 @@ paths:
         "404":
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: List all groups
       tags:
         - groups
@@ -156,7 +201,7 @@ paths:
       summary: Create a new group
       tags:
         - groups
-  /groups/{id}:
+  /groups/{groupId}:
     delete:
       responses:
         "204":
@@ -164,7 +209,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: Delete a group by ID
       tags:
         - groups
@@ -179,12 +224,12 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: Retrieve a specific group by ID
       tags:
         - groups
     parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/groupId'
     put:
       requestBody:
         content:
@@ -215,13 +260,33 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: Update a group's name, description, and recipient list
       tags:
         - groups
-  /groups/{id}/recipients:
+  /groups/{groupId}/events:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Event'
+                type: array
+          description: A list of events
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
+      summary: List all events for a group
+      tags:
+        - groups
     parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/groupId'
+  /groups/{groupId}/recipients:
+    parameters:
+      - $ref: '#/components/parameters/groupId'
     post:
       requestBody:
         content:
@@ -246,11 +311,11 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: Add a recipient to a group
       tags:
         - groups
-  /groups/{id}/recipients/{sub_id}:
+  /groups/{groupId}/recipients/{recipientId}:
     delete:
       responses:
         "204":
@@ -258,13 +323,13 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: Remove a recipient from a group
       tags:
         - groups
     parameters:
-      - $ref: '#/components/parameters/id'
-      - $ref: '#/components/parameters/sub_id'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/recipientId'
   /recipients:
     get:
       responses:
@@ -279,7 +344,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: List all recipients
       tags:
         - recipients
@@ -320,11 +385,11 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: Create a new recipient
       tags:
         - recipients
-  /recipients/{id}:
+  /recipients/{recipientId}:
     delete:
       responses:
         "204":
@@ -332,7 +397,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: Delete a recipient by ID
       tags:
         - recipients
@@ -347,12 +412,12 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: Get a specific recipient by ID
       tags:
         - recipients
     parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/recipientId'
     put:
       requestBody:
         content:
@@ -384,7 +449,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       summary: Update an existing recipient
       tags:
         - recipients
@@ -486,24 +551,44 @@ components:
         default: 1
         example: 9
         type: integer
-    id:
-      description: The UUID identifier of the resource
+    beaconId:
+      description: The UUID identifier of the beacon
       example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
       in: path
-      name: id
+      name: beaconId
       required: true
       schema:
-        description: Unique identifier of the resource in UUID format
+        description: Unique identifier of the beacon on UUID format
         format: uuid
         type: string
-    sub_id:
-      description: The UUID identifier of the sub-resource
+    eventId:
+      description: The UUID identifier of the event
       example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
       in: path
-      name: sub_id
+      name: eventId
       required: true
       schema:
-        description: Unique identifier of the sub-resource in UUID format
+        description: Unique identifier of the event on UUID format
+        format: uuid
+        type: string
+    groupId:
+      description: The UUID identifier of the group
+      example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+      in: path
+      name: groupId
+      required: true
+      schema:
+        description: Unique identifier of the group on UUID format
+        format: uuid
+        type: string
+    recipientId:
+      description: The UUID identifier of the recipient
+      example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+      in: path
+      name: recipientId
+      required: true
+      schema:
+        description: Unique identifier of the recipient on UUID format
         format: uuid
         type: string
   requestBodies:
@@ -623,6 +708,31 @@ components:
           example: Windows
           type: string
       type: object
+    Event:
+      allOf:
+        - $ref: '#/components/schemas/TenantBaseModel'
+        - properties:
+            arguments:
+              type: string
+            beaconID:
+              format: uuid
+              type: string
+            binaryName:
+              type: string
+            hostStat:
+              $ref: '#/components/schemas/HostStat'
+            interfaces:
+              items:
+                $ref: '#/components/schemas/Interface'
+              type: array
+            netStat:
+              items:
+                $ref: '#/components/schemas/NetStat'
+              type: array
+            userStat:
+              items:
+                $ref: '#/components/schemas/UserStat'
+              type: array
     Group:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
@@ -645,6 +755,66 @@ components:
                 $ref: '#/components/schemas/Recipient'
               type: array
           type: object
+    HostStat:
+      allOf:
+        - $ref: '#/components/schemas/TenantBaseModel'
+        - properties:
+            bootTime:
+              format: uint64
+              type: integer
+            eventID:
+              format: uuid
+              type: string
+            hostID:
+              type: string
+            hostname:
+              type: string
+            kernelArch:
+              type: string
+            kernelVersion:
+              type: string
+            os:
+              type: string
+            platform:
+              type: string
+            platformFamily:
+              type: string
+            platformVersion:
+              type: string
+            procs:
+              format: uint64
+              type: integer
+            uptime:
+              format: uint64
+              type: integer
+            virtualizationRole:
+              type: string
+            virtualizationSystem:
+              type: string
+    Interface:
+      allOf:
+        - $ref: '#/components/schemas/TenantBaseModel'
+        - properties:
+            eventID:
+              format: uuid
+              type: string
+            ipAddresses:
+              type: string
+            name:
+              type: string
+    NetStat:
+      allOf:
+        - $ref: '#/components/schemas/TenantBaseModel'
+        - properties:
+            eventID:
+              format: uuid
+              type: string
+            localAddress:
+              type: string
+            remoteAddress:
+              type: string
+            status:
+              type: string
     Recipient:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
@@ -665,109 +835,7 @@ components:
             Type:
               example: Email
               type: string
-    UserStat:
-      allOf:
-        - $ref: "#/components/schemas/TenantBaseModel"
-        - properties:
-            eventID:
-              type: string
-              format: uuid
-            user:
-              type: string
-            terminal:
-              type: string
-            host:
-              type: string
-            started:
-              type: integer
-              format: uint32
-    HostStat:
-      allOf:
-        - $ref: "#/components/schemas/TenantBaseModel"
-        - properties:
-            eventID:
-              type: string
-              format: uuid
-            hostname:
-              type: string
-            uptime:
-              type: integer
-              format: uint64
-            bootTime:
-              type: integer
-              format: uint64
-            procs:
-              type: integer
-              format: uint64
-            os:
-              type: string
-            platform:
-              type: string
-            platformFamily:
-              type: string
-            platformVersion:
-              type: string
-            kernelVersion:
-              type: string
-            kernelArch:
-              type: string
-            virtualizationSystem:
-              type: string
-            virtualizationRole:
-              type: string
-            hostID:
-              type: string
-    NetStat:
-      allOf:
-        - $ref: "#/components/schemas/TenantBaseModel"
-        - properties:
-            eventID:
-              type: string
-              format: uuid
-            remoteAddress:
-              type: string
-            localAddress:
-              type: string
-            status:
-              type: str
-    Interface:
-      allOf:
-        - $ref: "#/components/schemas/TenantBaseModel"
-        - properties:
-            eventID:
-              type: string
-              format: uuid
-            name:
-              type: string
-            ipAddresses:
-              type: string
-    Event:
-      allOf:
-        - $ref: "#/components/schemas/TenantBaseModel"
-        - properties:
-            tenantBaseModel:
-              $ref: "#/components/schemas/TenantBaseModel"
-            beaconID:
-              type: string
-              format: uuid
-            binaryName:
-              type: string
-            arguments:
-              type: string
-            hostStat:
-              $ref: "#/components/schemas/HostStat"
-            userStat:
-              type: array
-              items:
-                $ref: "#/components/schemas/UserStat"
-            netStat:
-              type: array
-              items:
-                $ref: "#/components/schemas/NetStat"
-            interfaces:
-              type: array
-              items:
-                $ref: "#/components/schemas/Interface"
+          type: object
     TenantBaseModel:
       properties:
         CreatedAt:
@@ -800,6 +868,22 @@ components:
           format: date-time
           type: string
       type: object
+    UserStat:
+      allOf:
+        - $ref: '#/components/schemas/TenantBaseModel'
+        - properties:
+            eventID:
+              format: uuid
+              type: string
+            host:
+              type: string
+            started:
+              format: uint32
+              type: integer
+            terminal:
+              type: string
+            user:
+              type: string
   securitySchemes:
     apiKeyAuth:
       in: header
