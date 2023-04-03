@@ -84,30 +84,8 @@ paths:
         - bearerAuth: [ ]
       requestBody:
         required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: The name of the recipient
-                type:
-                  type: string
-                  description: The type of the recipient
-                  enum:
-                    - email
-                    - slack
-                    - pagerduty
-                ContactInfo:
-                  type: string
-                  description: The contact information for the recipient
-                group_ids:
-                  type: array
-                  items:
-                      type: string
-                      format: uuid
-                  description: An array of group IDs to add the recipient to
+        $ref: '#/components/requestBodies/UpdateRecipient'
+
       responses:
         '201':
           description: The created recipient
@@ -143,24 +121,7 @@ paths:
         - bearerAuth: [ ]
       requestBody:
         required: true
-        content:
-          application/json:
-            schema:
-                type: object
-                properties:
-                    name:
-                      type: string
-                      description: The name of the recipient
-                    type:
-                      type: string
-                      description: The type of the recipient
-                      enum:
-                        - email
-                        - slack
-                        - pagerduty
-                    ContactInfo:
-                      type: string
-                      description: The contact information for the recipient
+        $ref: '#/components/requestBodies/UpdateRecipient'
       responses:
         '200':
           description: The updated recipient
@@ -205,23 +166,7 @@ paths:
         - groups
       requestBody:
         required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: The name of the group
-                description:
-                  type: string
-                  description: The description of the group
-                recipient_ids:
-                  type: array
-                  items:
-                    type: string
-                    format: uuid
-                  description: An array of recipient IDs to add to the group
+        $ref: '#/components/requestBodies/CreateGroup'
       responses:
         '201':
           description: The created group
@@ -257,23 +202,7 @@ paths:
         - bearerAuth: [ ]
       requestBody:
         required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: The name of the group
-                description:
-                  type: string
-                  description: The description of the group
-                recipient_ids:
-                  type: array
-                  items:
-                    type: string
-                    format: uuid
-                  description: An array of recipient IDs to add to the group
+        $ref: '#/components/requestBodies/CreateGroup'
       responses:
         '200':
           description: The updated group
@@ -325,15 +254,7 @@ paths:
         - bearerAuth: [ ]
       requestBody:
         required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                recipient_id:
-                  type: string
-                  format: uuid
-                  description: The ID of the recipient to add to the group
+        $ref: '#/components/requestBodies/AddRecipientsToGroup'
       responses:
         '201':
           description: A list of recipients
@@ -664,6 +585,36 @@ components:
               - code
               - message
   requestBodies:
+    UpdateRecipient:
+      description: Update an existing recipient
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                minLength: 2
+                maxLength: 50
+                example: My Recipient
+              description:
+                type: string
+                example: A description of the recipient
+              type:
+                type: string
+                example: Email
+              contactInfo:
+                type: string
+                example:
+    AddRecipientsToGroup:
+      description: Add recipients to a group
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
     CreateGroup:
       description: Create a new group
       content:
