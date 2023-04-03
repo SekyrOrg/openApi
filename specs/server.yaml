@@ -630,11 +630,6 @@ components:
               description:
                 type: string
                 example: A description of my resource
-              recipientIds:
-                type: array
-                items:
-                  type: string
-                example: [ "123e4567-e89b-12d3-a456-426655440000", "123e4567-e89b-12d3-a456-426655440001" ]
             required:
               - name
               - description
