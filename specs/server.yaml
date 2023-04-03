@@ -294,6 +294,26 @@ paths:
           description: No Content
         default:
           $ref: '#/components/responses/Error'
+  /groups/{groupId}/events:
+    parameters:
+      - $ref: '#/components/parameters/groupId'
+    get:
+      summary: List all events for a group
+      tags:
+        - groups
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: A list of events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        default:
+          $ref: '#/components/responses/Error'
   /groups/{groupId}/recipients:
     parameters:
       - $ref: '#/components/parameters/groupId'
@@ -340,7 +360,62 @@ paths:
           description: No Content
         default:
           $ref: '#/components/responses/Error'
-
+  /events/{eventId}:
+    parameters:
+      - $ref: '#/components/parameters/eventId'
+    get:
+      summary: Retrieve a specific event by ID
+      tags:
+        - events
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: The event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        default:
+          $ref: '#/components/responses/Error'
+  /events/{eventId}/recipients:
+        parameters:
+            - $ref: '#/components/parameters/eventId'
+        get:
+          summary: Retrieve a list of recipients for a specific event
+          tags:
+          - events
+          security:
+          - bearerAuth: [ ]
+          responses:
+            '200':
+               description: A list of recipients
+               content:
+                 application/json:
+                   schema:
+                     type: array
+                     items:
+                       $ref: '#/components/schemas/Recipient'
+            default:
+              $ref: '#/components/responses/Error'
+  /events/{eventId}/group:
+    parameters:
+      - $ref: '#/components/parameters/eventId'
+    get:
+      summary: Retrieve the group for a specific event
+      tags:
+        - events
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '201':
+          description: The group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        default:
+          $ref: '#/components/responses/Error'
 components:
   securitySchemes:
     bearerAuth:
@@ -464,6 +539,111 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Group'
+    Event:
+      allOf:
+        - $ref: '#/components/schemas/TenantBaseModel'
+        - properties:
+            beaconID:
+              type: string
+              format: uuid
+            binaryName:
+              type: string
+            arguments:
+              type: string
+            hostStat:
+              $ref: "#/components/schemas/HostStat"
+            userStat:
+              type: array
+              items:
+                $ref: "#/components/schemas/UserStat"
+            netStat:
+              type: array
+              items:
+                $ref: "#/components/schemas/NetStat"
+            interfaces:
+              type: array
+              items:
+                $ref: "#/components/schemas/Interface"
+
+    UserStat:
+      allOf:
+        - $ref: "#/components/schemas/TenantBaseModel"
+        - properties:
+            eventID:
+              type: string
+              format: uuid
+            user:
+              type: string
+            terminal:
+              type: string
+            host:
+              type: string
+            started:
+              type: integer
+              format: uint32
+
+    HostStat:
+      allOf:
+        - $ref: "#/components/schemas/TenantBaseModel"
+        - properties:
+            eventID:
+              type: string
+              format: uuid
+            hostname:
+              type: string
+            uptime:
+              type: integer
+              format: uint64
+            bootTime:
+              type: integer
+              format: uint64
+            procs:
+              type: integer
+              format: uint64
+            os:
+              type: string
+            platform:
+              type: string
+            platformFamily:
+              type: string
+            platformVersion:
+              type: string
+            kernelVersion:
+              type: string
+            kernelArch:
+              type: string
+            virtualizationSystem:
+              type: string
+            virtualizationRole:
+              type: string
+            hostID:
+              type: string
+
+    NetStat:
+      allOf:
+        - $ref: "#/components/schemas/TenantBaseModel"
+        - properties:
+            eventID:
+              type: string
+              format: uuid
+            remoteAddress:
+              type: string
+            localAddress:
+              type: string
+            status:
+              type: string
+
+    Interface:
+      allOf:
+        - $ref: "#/components/schemas/TenantBaseModel"
+        - properties:
+            eventID:
+              type: string
+              format: uuid
+            name:
+              type: string
+            ipAddresses:
+              type: string
   responses:
     Error:
       description: An error occurred
@@ -561,8 +741,8 @@ components:
         format: uuid
         description: Unique identifier of the group on UUID format
       example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
-    eventID:
-        name: eventID
+    eventId:
+        name: eventId
         in: path
         description: The UUID identifier of the event
         required: true

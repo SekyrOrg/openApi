@@ -4,14 +4,16 @@ info:
   description: Example API for managing beacons
   version: 1.0.0
 tags:
-  - name: creator
+  - name: Creator
     description: API for creating beacons
+  - name: Health
+    description: API for checking server health
 paths:
-  /distlist:
+  /creator/distlist:
     get:
       summary: List all supported OS and Arch combinations
       tags:
-        - creator
+        - Creator
       security:
         - bearerAuth: [ ]
       responses:
@@ -29,7 +31,7 @@ paths:
     post:
       summary: Create a new beacon.
       tags:
-        - creator
+        - Creator
       security:
         - bearerAuth: [ ]
       parameters:
@@ -66,7 +68,7 @@ paths:
     get:
       summary: Check the health of the server.
       tags:
-        - health
+        - Health
       responses:
         '200':
           description: The server is healthy

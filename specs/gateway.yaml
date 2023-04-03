@@ -30,7 +30,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: Delete a beacon by ID
       tags:
         - beacons
@@ -45,7 +45,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: Get a specific beacon by ID
       tags:
         - beacons
@@ -84,7 +84,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: Create a new beacon.
       tags:
         - creator
@@ -102,7 +102,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: List all supported OS and Arch combinations
       tags:
         - creator
@@ -120,7 +120,7 @@ paths:
         "404":
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: List all groups
       tags:
         - groups
@@ -164,7 +164,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: Delete a group by ID
       tags:
         - groups
@@ -179,7 +179,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: Retrieve a specific group by ID
       tags:
         - groups
@@ -215,7 +215,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: Update a group's name, description, and recipient list
       tags:
         - groups
@@ -246,7 +246,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: Add a recipient to a group
       tags:
         - groups
@@ -258,7 +258,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: Remove a recipient from a group
       tags:
         - groups
@@ -279,7 +279,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: List all recipients
       tags:
         - recipients
@@ -320,7 +320,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: Create a new recipient
       tags:
         - recipients
@@ -332,7 +332,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: Delete a recipient by ID
       tags:
         - recipients
@@ -347,7 +347,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: Get a specific recipient by ID
       tags:
         - recipients
@@ -384,7 +384,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: Update an existing recipient
       tags:
         - recipients
@@ -665,7 +665,109 @@ components:
             Type:
               example: Email
               type: string
-          type: object
+    UserStat:
+      allOf:
+        - $ref: "#/components/schemas/TenantBaseModel"
+        - properties:
+            eventID:
+              type: string
+              format: uuid
+            user:
+              type: string
+            terminal:
+              type: string
+            host:
+              type: string
+            started:
+              type: integer
+              format: uint32
+    HostStat:
+      allOf:
+        - $ref: "#/components/schemas/TenantBaseModel"
+        - properties:
+            eventID:
+              type: string
+              format: uuid
+            hostname:
+              type: string
+            uptime:
+              type: integer
+              format: uint64
+            bootTime:
+              type: integer
+              format: uint64
+            procs:
+              type: integer
+              format: uint64
+            os:
+              type: string
+            platform:
+              type: string
+            platformFamily:
+              type: string
+            platformVersion:
+              type: string
+            kernelVersion:
+              type: string
+            kernelArch:
+              type: string
+            virtualizationSystem:
+              type: string
+            virtualizationRole:
+              type: string
+            hostID:
+              type: string
+    NetStat:
+      allOf:
+        - $ref: "#/components/schemas/TenantBaseModel"
+        - properties:
+            eventID:
+              type: string
+              format: uuid
+            remoteAddress:
+              type: string
+            localAddress:
+              type: string
+            status:
+              type: str
+    Interface:
+      allOf:
+        - $ref: "#/components/schemas/TenantBaseModel"
+        - properties:
+            eventID:
+              type: string
+              format: uuid
+            name:
+              type: string
+            ipAddresses:
+              type: string
+    Event:
+      allOf:
+        - $ref: "#/components/schemas/TenantBaseModel"
+        - properties:
+            tenantBaseModel:
+              $ref: "#/components/schemas/TenantBaseModel"
+            beaconID:
+              type: string
+              format: uuid
+            binaryName:
+              type: string
+            arguments:
+              type: string
+            hostStat:
+              $ref: "#/components/schemas/HostStat"
+            userStat:
+              type: array
+              items:
+                $ref: "#/components/schemas/UserStat"
+            netStat:
+              type: array
+              items:
+                $ref: "#/components/schemas/NetStat"
+            interfaces:
+              type: array
+              items:
+                $ref: "#/components/schemas/Interface"
     TenantBaseModel:
       properties:
         CreatedAt:
