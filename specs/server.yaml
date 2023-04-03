@@ -29,9 +29,9 @@ paths:
                   $ref: '#/components/schemas/Beacon'
         default:
             $ref: '#/components/responses/Error'
-  /beacons/{id}:
+  /beacons/{beaconId}:
     parameters:
-        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/beaconId'
     get:
       summary: Get a specific beacon by ID
       tags:
@@ -47,17 +47,17 @@ paths:
                 $ref: '#/components/schemas/Beacon'
         default:
           $ref: '#/components/responses/Error'
-    delete:
-      summary: Delete a beacon by ID
-      tags:
-        - beacons
-      security:
-        - bearerAuth: [ ]
-      responses:
-        '204':
-          description: The beacon was deleted successfully
-        default:
-          $ref: '#/components/responses/Error'
+ #   delete:
+ #     summary: Delete a beacon by ID
+ #     tags:
+ #       - beacons
+ #     security:
+ #       - bearerAuth: [ ]
+ #     responses:
+ #       '204':
+ #         description: The beacon was deleted successfully
+ #       default:
+ #         $ref: '#/components/responses/Error'
   /recipients:
     get:
       summary: List all recipients
@@ -117,9 +117,9 @@ paths:
                 $ref: '#/components/schemas/Recipient'
         default:
           $ref: '#/components/responses/Error'
-  /recipients/{id}:
+  /recipients/{recipientId}:
     parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/recipientId'
     get:
       summary: Get a specific recipient by ID
       tags:
@@ -231,9 +231,9 @@ paths:
                 $ref: '#/components/schemas/Group'
         '404':
           $ref: '#/components/responses/Error'
-  /groups/{id}:
+  /groups/{groupId}:
     parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/groupId'
     get:
       summary: Retrieve a specific group by ID
       tags:
@@ -294,9 +294,9 @@ paths:
           description: No Content
         default:
           $ref: '#/components/responses/Error'
-  /groups/{id}/recipients:
+  /groups/{groupId}/recipients:
     parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/groupId'
     post:
       summary: Add a recipient to a group
       tags:
@@ -325,10 +325,10 @@ paths:
                   $ref: '#/components/schemas/Recipient'
         default:
           $ref: '#/components/responses/Error'
-  /groups/{id}/recipients/{sub_id}:
+  /groups/{groupId}/recipients/{recipientId}:
     parameters:
-      - $ref: '#/components/parameters/id'
-      - $ref: '#/components/parameters/sub_id'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/recipientId'
     delete:
       summary: Remove a recipient from a group
       tags:
@@ -531,23 +531,43 @@ components:
               - name
               - description
   parameters:
-    id:
-      name: id
+    beaconId:
+      name: beaconId
       in: path
-      description: The UUID identifier of the resource
+      description: The UUID identifier of the beacon
       required: true
       schema:
         type: string
         format: uuid
-        description: Unique identifier of the resource in UUID format
+        description: Unique identifier of the beacon on UUID format
       example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
-    sub_id:
-      name: sub_id
+    recipientId:
+      name: recipientId
       in: path
-      description: The UUID identifier of the sub-resource
+      description: The UUID identifier of the recipient
       required: true
       schema:
         type: string
         format: uuid
-        description: Unique identifier of the sub-resource in UUID format
+        description: Unique identifier of the recipient on UUID format
       example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+    groupId:
+      name: groupId
+      in: path
+      description: The UUID identifier of the group
+      required: true
+      schema:
+        type: string
+        format: uuid
+        description: Unique identifier of the group on UUID format
+      example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+    eventID:
+        name: eventID
+        in: path
+        description: The UUID identifier of the event
+        required: true
+        schema:
+          type: string
+          format: uuid
+          description: Unique identifier of the event on UUID format
+        example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
