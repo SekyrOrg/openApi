@@ -1,9 +1,3 @@
-generate/responses:
-	oapi-codegen \
-    	-package responses \
-    	-generate spec,types \
-    	-o gen/responses/responses.gen.go \
-    	 specs/responses.yaml
 generate/server:
 	oapi-codegen \
 	-package server \

@@ -19,6 +19,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	BearerAuthScopes = "bearerAuth.Scopes"
+)
+
 // Dist defines model for Dist.
 type Dist struct {
 	Arch *string `json:"arch,omitempty"`
@@ -28,14 +32,20 @@ type Dist struct {
 // Arch defines model for Arch.
 type Arch = string
 
-// BeaconId defines model for BeaconId.
-type BeaconId = openapi_types.UUID
+// BeaconUUID defines model for BeaconUUID.
+type BeaconUUID = openapi_types.UUID
 
-// GroupId defines model for GroupId.
-type GroupId = openapi_types.UUID
+// Debug defines model for Debug.
+type Debug = bool
+
+// GroupUUID defines model for GroupUUID.
+type GroupUUID = openapi_types.UUID
 
 // Gzip defines model for Gzip.
 type Gzip = bool
+
+// Lldflags defines model for Lldflags.
+type Lldflags = string
 
 // OS defines model for OS.
 type OS = string
@@ -55,10 +65,13 @@ type Upx = bool
 // UpxLevel defines model for UpxLevel.
 type UpxLevel = int
 
-// ForbiddenError defines model for ForbiddenError.
-type ForbiddenError struct {
-	Error   *string `json:"error,omitempty"`
-	Message *string `json:"message,omitempty"`
+// Error defines model for Error.
+type Error struct {
+	// Code A unique error code for the specific type of error
+	Code string `json:"code"`
+
+	// Message A human-readable error message describing the error
+	Message string `json:"message"`
 }
 
 // PostCreatorParams defines parameters for PostCreator.
@@ -72,11 +85,11 @@ type PostCreatorParams struct {
 	// Arch The architecture of the beacon.
 	Arch Arch `form:"arch" json:"arch"`
 
-	// BeaconId The UUID of the beacon.
-	BeaconId *BeaconId `form:"beacon_id,omitempty" json:"beacon_id,omitempty"`
+	// BeaconUuid The UUID of the beacon.
+	BeaconUuid *BeaconUUID `form:"beacon_uuid,omitempty" json:"beacon_uuid,omitempty"`
 
-	// GroupId The UUID of the group.
-	GroupId *GroupId `form:"group_id,omitempty" json:"group_id,omitempty"`
+	// GroupUuid The UUID of the group.
+	GroupUuid *GroupUUID `form:"group_uuid,omitempty" json:"group_uuid,omitempty"`
 
 	// Static Indicates if the beacon is static.
 	Static *Static `form:"static,omitempty" json:"static,omitempty"`
@@ -90,6 +103,12 @@ type PostCreatorParams struct {
 	// Gzip Indicates if the beacon is compressed using Gzip.
 	Gzip *Gzip `form:"gzip,omitempty" json:"gzip,omitempty"`
 
+	// Debug Include debug information in the beacon
+	Debug *Debug `form:"debug,omitempty" json:"debug,omitempty"`
+
+	// Lldflags The lldflags used to build the beacon.
+	Lldflags *Lldflags `form:"lldflags,omitempty" json:"lldflags,omitempty"`
+
 	// Transport The transport protocol used by the beacon.
 	Transport *Transport `form:"transport,omitempty" json:"transport,omitempty"`
 }
@@ -100,8 +119,8 @@ type ServerInterface interface {
 	// (POST /creator)
 	PostCreator(c *gin.Context, params PostCreatorParams)
 	// List all supported OS and Arch combinations
-	// (GET /distlist)
-	GetDistlist(c *gin.Context)
+	// (GET /creator/distlist)
+	GetCreatorDistlist(c *gin.Context)
 	// Check the health of the server.
 	// (GET /healthz)
 	GetHealthz(c *gin.Context)
@@ -120,6 +139,8 @@ type MiddlewareFunc func(c *gin.Context)
 func (siw *ServerInterfaceWrapper) PostCreator(c *gin.Context) {
 
 	var err error
+
+	c.Set(BearerAuthScopes, []string{""})
 
 	// Parameter object where we will unmarshal all parameters from the context
 	var params PostCreatorParams
@@ -169,19 +190,19 @@ func (siw *ServerInterfaceWrapper) PostCreator(c *gin.Context) {
 		return
 	}
 
-	// ------------- Optional query parameter "beacon_id" -------------
+	// ------------- Optional query parameter "beacon_uuid" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "beacon_id", c.Request.URL.Query(), &params.BeaconId)
+	err = runtime.BindQueryParameter("form", true, false, "beacon_uuid", c.Request.URL.Query(), &params.BeaconUuid)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter beacon_id: %s", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter beacon_uuid: %s", err), http.StatusBadRequest)
 		return
 	}
 
-	// ------------- Optional query parameter "group_id" -------------
+	// ------------- Optional query parameter "group_uuid" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "group_id", c.Request.URL.Query(), &params.GroupId)
+	err = runtime.BindQueryParameter("form", true, false, "group_uuid", c.Request.URL.Query(), &params.GroupUuid)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter group_id: %s", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter group_uuid: %s", err), http.StatusBadRequest)
 		return
 	}
 
@@ -217,6 +238,22 @@ func (siw *ServerInterfaceWrapper) PostCreator(c *gin.Context) {
 		return
 	}
 
+	// ------------- Optional query parameter "debug" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "debug", c.Request.URL.Query(), &params.Debug)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter debug: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "lldflags" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "lldflags", c.Request.URL.Query(), &params.Lldflags)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter lldflags: %s", err), http.StatusBadRequest)
+		return
+	}
+
 	// ------------- Optional query parameter "transport" -------------
 
 	err = runtime.BindQueryParameter("form", true, false, "transport", c.Request.URL.Query(), &params.Transport)
@@ -232,14 +269,16 @@ func (siw *ServerInterfaceWrapper) PostCreator(c *gin.Context) {
 	siw.Handler.PostCreator(c, params)
 }
 
-// GetDistlist operation middleware
-func (siw *ServerInterfaceWrapper) GetDistlist(c *gin.Context) {
+// GetCreatorDistlist operation middleware
+func (siw *ServerInterfaceWrapper) GetCreatorDistlist(c *gin.Context) {
+
+	c.Set(BearerAuthScopes, []string{""})
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 	}
 
-	siw.Handler.GetDistlist(c)
+	siw.Handler.GetCreatorDistlist(c)
 }
 
 // GetHealthz operation middleware
@@ -283,7 +322,7 @@ func RegisterHandlersWithOptions(router *gin.Engine, si ServerInterface, options
 
 	router.POST(options.BaseURL+"/creator", wrapper.PostCreator)
 
-	router.GET(options.BaseURL+"/distlist", wrapper.GetDistlist)
+	router.GET(options.BaseURL+"/creator/distlist", wrapper.GetCreatorDistlist)
 
 	router.GET(options.BaseURL+"/healthz", wrapper.GetHealthz)
 
@@ -293,24 +332,28 @@ func RegisterHandlersWithOptions(router *gin.Engine, si ServerInterface, options
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7xWb2/bthP+KgR/v5dK5CSO1/pdunRdgAAJmgbbMAQBLZ4tdhLJkqc0TqDvPhwp2ZYt",
-	"p8qC7ZVh6uHdw+f+PvPMlNZo0Oj59Jlb4UQJCC78O3NZTr8SfOaURWU0n/IvOTDhslwhZFg5YGbOMAc2",
-	"A5EZfcgTrgj2rQK35AnXogQ+5XSDJ9zBt0o5kHyKroKE+yyHUpATeBSlLQj6+G5yPxnzhOPS0n+PTukF",
-	"r+uEfwg+LmQ/q9vbi/NhbOLXeyV5P4Wj4xMYn05+OoB372cHR8fy5ECMTycH4+PJ5PR0PB6NRiOe8Llx",
-	"pUA+5VUVTO0S/uRMZYfwXRBwH93w8b9g+6TsLtULLVUmEDxTm9oy5RlljwPvQbLKK71gZGHvK8j65gsk",
-	"zEVVYJsLqwfFvw29mTEFCB34Xd30C2ksOIHk3y89QjksCYwfmJC/KS3Nd98r2WewxuGZlG5PjD9ftmxc",
-	"gDIP7gHcPlIRdC/I4DB2OaKdpmlzcJiZMo1GevneoECVvSrIPlzZRzh+7Y/rXBR+UGC/OKF94NwrIraf",
-	"mXUGTWYKVlHOzZYDwry63M+RS02R7erZK92tfXxbcdxe/76PZGUf3yjhrX28hAco+hVsuSijWUGwlYAv",
-	"k7oP4H5qRxu03q84KY2wAMdrIuXAW6M9hHHyi3EzJSXoj86ZUC6Z0Qg6BF1YW5CQyuj0qyfezxs+raMS",
-	"RxUNQXt/HcSV7U4oN0+34pnwErwXC+ja+cNUTDhg2iATFebGqSeQDA0TWQbeM8yVZw68qVwGHWevvrqb",
-	"Yc2JmX2FDKOC3VC+0gcZiCIG3c6Vx101RTPlfzyAE2qZgztjz2OUnpvd/PwYzbGz6ws2N46VQosF1Uss",
-	"pWBdYfAX5z8hecIfwPlo4ehwdDgK/CxoYRWf8pNwlHArMA+k08yBwJg31kQhmrkRNwp+bTz+3ICSzir0",
-	"5zP/v4M5n/L/peuFKV1D0o0xUCc/RF/dDEGF9WsAbrUUDcC2+8gAaDMpBiCpMQ6DxQ41hCftCgNw68FR",
-	"38VxCR4/GLl8ob2YDAEPPDoQZbfNrDakmdIidMLttK63Z/J2kzsejf491926Ee2sCZkNks2dKcMM8tWs",
-	"VEhHjbU64ePRCfnp03P1gHSrRYf+UZUlmZjyUBvABNPwfWPmolhQifC2vu7oViqVx6LpNwvoqbZPgOct",
-	"5lUa7k4HhVD6fY9r+l8amt+6LQnnxLJP1TNGlGhn85WlzALJrm6Y0JJRQdIkJVEJ7bcEuqSLoiiG3Fzr",
-	"tlIqCpeDKDB/ekm3XxvIG2XrjgHa4yrfnYbR0bIz5tZn/2B+0SoS919akPLGVJ3w08j9JTTNvNWNbmLm",
-	"kP0VEj9+bxfu9abdat2Ke1fXdf13AAAA//+L1nQK/Q4AAA==",
+	"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",
+	"AP//y9Xu60wSAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

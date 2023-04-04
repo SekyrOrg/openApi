@@ -46,8 +46,8 @@ paths:
         - $ref: '#/components/parameters/ReportAddr'
         - $ref: '#/components/parameters/OS'
         - $ref: '#/components/parameters/Arch'
-        - $ref: '#/components/parameters/BeaconId'
-        - $ref: '#/components/parameters/GroupId'
+        - $ref: '#/components/parameters/BeaconUUID'
+        - $ref: '#/components/parameters/GroupUUID'
         - $ref: '#/components/parameters/Static'
         - $ref: '#/components/parameters/Upx'
         - $ref: '#/components/parameters/UpxLevel'
@@ -171,23 +171,7 @@ paths:
         - groups
     post:
       requestBody:
-        content:
-          application/json:
-            schema:
-              properties:
-                description:
-                  description: The description of the group
-                  type: string
-                name:
-                  description: The name of the group
-                  type: string
-                recipient_ids:
-                  description: An array of recipient IDs to add to the group
-                  items:
-                    format: uuid
-                    type: string
-                  type: array
-              type: object
+        $ref: '#/components/requestBodies/CreateGroup'
         required: true
       responses:
         "201":
@@ -232,23 +216,7 @@ paths:
       - $ref: '#/components/parameters/groupId'
     put:
       requestBody:
-        content:
-          application/json:
-            schema:
-              properties:
-                description:
-                  description: The description of the group
-                  type: string
-                name:
-                  description: The name of the group
-                  type: string
-                recipient_ids:
-                  description: An array of recipient IDs to add to the group
-                  items:
-                    format: uuid
-                    type: string
-                  type: array
-              type: object
+        $ref: '#/components/requestBodies/UpdateGroup'
         required: true
       responses:
         "200":
@@ -289,15 +257,7 @@ paths:
       - $ref: '#/components/parameters/groupId'
     post:
       requestBody:
-        content:
-          application/json:
-            schema:
-              properties:
-                recipient_id:
-                  description: The ID of the recipient to add to the group
-                  format: uuid
-                  type: string
-              type: object
+        $ref: '#/components/requestBodies/AddRecipientsToGroup'
         required: true
       responses:
         "201":
@@ -318,8 +278,12 @@ paths:
   /groups/{groupId}/recipients/{recipientId}:
     delete:
       responses:
-        "204":
-          description: No Content
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: The recipient was removed from the group
         default:
           $ref: '#/components/responses/Error'
       security:
@@ -350,30 +314,7 @@ paths:
         - recipients
     post:
       requestBody:
-        content:
-          application/json:
-            schema:
-              properties:
-                ContactInfo:
-                  description: The contact information for the recipient
-                  type: string
-                group_ids:
-                  description: An array of group IDs to add the recipient to
-                  items:
-                    format: uuid
-                    type: string
-                  type: array
-                name:
-                  description: The name of the recipient
-                  type: string
-                type:
-                  description: The type of the recipient
-                  enum:
-                    - email
-                    - slack
-                    - pagerduty
-                  type: string
-              type: object
+        $ref: '#/components/requestBodies/CreateRecipient'
         required: true
       responses:
         "201":
@@ -420,24 +361,7 @@ paths:
       - $ref: '#/components/parameters/recipientId'
     put:
       requestBody:
-        content:
-          application/json:
-            schema:
-              properties:
-                ContactInfo:
-                  description: The contact information for the recipient
-                  type: string
-                name:
-                  description: The name of the recipient
-                  type: string
-                type:
-                  description: The type of the recipient
-                  enum:
-                    - email
-                    - slack
-                    - pagerduty
-                  type: string
-              type: object
+        $ref: '#/components/requestBodies/UpdateRecipient'
         required: true
       responses:
         "200":
@@ -463,10 +387,10 @@ components:
       schema:
         example: x86_64
         type: string
-    BeaconId:
+    BeaconUUID:
       description: The UUID of the beacon.
       in: query
-      name: beacon_id
+      name: beacon_uuid
       schema:
         example: 123e4567-e89b-12d3-a456-426655440000
         format: uuid
@@ -479,10 +403,10 @@ components:
         default: true
         example: true
         type: boolean
-    GroupId:
+    GroupUUID:
       description: The UUID of the group.
       in: query
-      name: group_id
+      name: group_uuid
       schema:
         example: 123e4567-e89b-12d3-a456-426655440000
         format: uuid
@@ -592,6 +516,15 @@ components:
         format: uuid
         type: string
   requestBodies:
+    AddRecipientsToGroup:
+      content:
+        application/json:
+          schema:
+            items:
+              format: uuid
+              type: string
+            type: array
+      description: Add recipients to a group
     CreateGroup:
       content:
         application/json:
@@ -605,18 +538,36 @@ components:
                 maxLength: 50
                 minLength: 2
                 type: string
-              recipientIds:
-                example:
-                  - 123e4567-e89b-12d3-a456-426655440000
-                  - 123e4567-e89b-12d3-a456-426655440001
-                items:
-                  type: string
-                type: array
             required:
               - name
               - description
             type: object
       description: Create a new group
+    CreateRecipient:
+      content:
+        application/json:
+          schema:
+            properties:
+              contactInfo:
+                example: null
+                type: string
+              description:
+                example: A description of the recipient
+                type: string
+              name:
+                example: Mr Recipient
+                maxLength: 50
+                minLength: 2
+                type: string
+              type:
+                example: Email
+                type: string
+            required:
+              - name
+              - type
+              - contactInfo
+            type: object
+      description: Create a new recipient
     UpdateGroup:
       content:
         application/json:
@@ -630,18 +581,36 @@ components:
                 maxLength: 50
                 minLength: 2
                 type: string
-              recipientIds:
-                example:
-                  - 123e4567-e89b-12d3-a456-426655440000
-                  - 123e4567-e89b-12d3-a456-426655440001
-                items:
-                  type: string
-                type: array
             required:
               - name
               - description
             type: object
       description: Update an existing group
+    UpdateRecipient:
+      content:
+        application/json:
+          schema:
+            properties:
+              contactInfo:
+                example: null
+                type: string
+              description:
+                example: A description of the recipient
+                type: string
+              name:
+                example: My Recipient
+                maxLength: 50
+                minLength: 2
+                type: string
+              type:
+                example: Email
+                type: string
+            required:
+              - name
+              - type
+              - contactInfo
+            type: object
+      description: Update an existing recipient
   responses:
     Error:
       content:

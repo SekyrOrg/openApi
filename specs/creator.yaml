@@ -38,8 +38,8 @@ paths:
             - $ref: '#/components/parameters/ReportAddr'
             - $ref: '#/components/parameters/OS'
             - $ref: '#/components/parameters/Arch'
-            - $ref: '#/components/parameters/BeaconId'
-            - $ref: '#/components/parameters/GroupId'
+            - $ref: '#/components/parameters/BeaconUUID'
+            - $ref: '#/components/parameters/GroupUUID'
             - $ref: '#/components/parameters/Static'
             - $ref: '#/components/parameters/Upx'
             - $ref: '#/components/parameters/UpxLevel'
@@ -119,16 +119,16 @@ components:
       schema:
         type: string
         example: x86_64
-    BeaconId:
-      name: beacon_id
+    BeaconUUID:
+      name: beacon_uuid
       in: query
       description: The UUID of the beacon.
       schema:
         type: string
         format: uuid
         example: "123e4567-e89b-12d3-a456-426655440000"
-    GroupId:
-      name: group_id
+    GroupUUID:
+      name: group_uuid
       in: query
       description: The UUID of the group.
       schema:

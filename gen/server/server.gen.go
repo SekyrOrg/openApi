@@ -20,6 +20,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	BearerAuthScopes = "bearerAuth.Scopes"
+)
+
 // Beacon defines model for Beacon.
 type Beacon struct {
 	Arch      *string             `json:"Arch,omitempty"`
@@ -42,6 +46,25 @@ type Beacon struct {
 	UpxLevel   *int                `json:"UpxLevel,omitempty"`
 }
 
+// Event defines model for Event.
+type Event struct {
+	CreatedAt *time.Time `json:"CreatedAt,omitempty"`
+	DeletedAt *struct {
+		Deleted bool      `json:"Deleted"`
+		Time    time.Time `json:"Time"`
+	} `json:"DeletedAt,omitempty"`
+	ID         *openapi_types.UUID `json:"ID,omitempty"`
+	TenantID   *openapi_types.UUID `json:"TenantID,omitempty"`
+	UpdatedAt  *time.Time          `json:"UpdatedAt,omitempty"`
+	Arguments  *string             `json:"arguments,omitempty"`
+	BeaconID   *openapi_types.UUID `json:"beaconID,omitempty"`
+	BinaryName *string             `json:"binaryName,omitempty"`
+	HostStat   *HostStat           `json:"hostStat,omitempty"`
+	Interfaces *[]Interface        `json:"interfaces,omitempty"`
+	NetStat    *[]NetStat          `json:"netStat,omitempty"`
+	UserStat   *[]UserStat         `json:"userStat,omitempty"`
+}
+
 // Group defines model for Group.
 type Group struct {
 	Beacons   *[]Beacon  `json:"Beacons,omitempty"`
@@ -57,6 +80,63 @@ type Group struct {
 	Recipients  *[]Recipient        `json:"Recipients,omitempty"`
 	TenantID    *openapi_types.UUID `json:"TenantID,omitempty"`
 	UpdatedAt   *time.Time          `json:"UpdatedAt,omitempty"`
+}
+
+// HostStat defines model for HostStat.
+type HostStat struct {
+	CreatedAt *time.Time `json:"CreatedAt,omitempty"`
+	DeletedAt *struct {
+		Deleted bool      `json:"Deleted"`
+		Time    time.Time `json:"Time"`
+	} `json:"DeletedAt,omitempty"`
+	ID                   *openapi_types.UUID `json:"ID,omitempty"`
+	TenantID             *openapi_types.UUID `json:"TenantID,omitempty"`
+	UpdatedAt            *time.Time          `json:"UpdatedAt,omitempty"`
+	BootTime             *uint64             `json:"bootTime,omitempty"`
+	EventID              *openapi_types.UUID `json:"eventID,omitempty"`
+	HostID               *string             `json:"hostID,omitempty"`
+	Hostname             *string             `json:"hostname,omitempty"`
+	KernelArch           *string             `json:"kernelArch,omitempty"`
+	KernelVersion        *string             `json:"kernelVersion,omitempty"`
+	Os                   *string             `json:"os,omitempty"`
+	Platform             *string             `json:"platform,omitempty"`
+	PlatformFamily       *string             `json:"platformFamily,omitempty"`
+	PlatformVersion      *string             `json:"platformVersion,omitempty"`
+	Procs                *uint64             `json:"procs,omitempty"`
+	Uptime               *uint64             `json:"uptime,omitempty"`
+	VirtualizationRole   *string             `json:"virtualizationRole,omitempty"`
+	VirtualizationSystem *string             `json:"virtualizationSystem,omitempty"`
+}
+
+// Interface defines model for Interface.
+type Interface struct {
+	CreatedAt *time.Time `json:"CreatedAt,omitempty"`
+	DeletedAt *struct {
+		Deleted bool      `json:"Deleted"`
+		Time    time.Time `json:"Time"`
+	} `json:"DeletedAt,omitempty"`
+	ID          *openapi_types.UUID `json:"ID,omitempty"`
+	TenantID    *openapi_types.UUID `json:"TenantID,omitempty"`
+	UpdatedAt   *time.Time          `json:"UpdatedAt,omitempty"`
+	EventID     *openapi_types.UUID `json:"eventID,omitempty"`
+	IpAddresses *string             `json:"ipAddresses,omitempty"`
+	Name        *string             `json:"name,omitempty"`
+}
+
+// NetStat defines model for NetStat.
+type NetStat struct {
+	CreatedAt *time.Time `json:"CreatedAt,omitempty"`
+	DeletedAt *struct {
+		Deleted bool      `json:"Deleted"`
+		Time    time.Time `json:"Time"`
+	} `json:"DeletedAt,omitempty"`
+	ID            *openapi_types.UUID `json:"ID,omitempty"`
+	TenantID      *openapi_types.UUID `json:"TenantID,omitempty"`
+	UpdatedAt     *time.Time          `json:"UpdatedAt,omitempty"`
+	EventID       *openapi_types.UUID `json:"eventID,omitempty"`
+	LocalAddress  *string             `json:"localAddress,omitempty"`
+	RemoteAddress *string             `json:"remoteAddress,omitempty"`
+	Status        *string             `json:"status,omitempty"`
 }
 
 // Recipient defines model for Recipient.
@@ -88,41 +168,138 @@ type TenantBaseModel struct {
 	UpdatedAt *time.Time          `json:"UpdatedAt,omitempty"`
 }
 
-// ForbiddenError defines model for ForbiddenError.
-type ForbiddenError struct {
-	Error   *string `json:"error,omitempty"`
-	Message *string `json:"message,omitempty"`
+// UserStat defines model for UserStat.
+type UserStat struct {
+	CreatedAt *time.Time `json:"CreatedAt,omitempty"`
+	DeletedAt *struct {
+		Deleted bool      `json:"Deleted"`
+		Time    time.Time `json:"Time"`
+	} `json:"DeletedAt,omitempty"`
+	ID        *openapi_types.UUID `json:"ID,omitempty"`
+	TenantID  *openapi_types.UUID `json:"TenantID,omitempty"`
+	UpdatedAt *time.Time          `json:"UpdatedAt,omitempty"`
+	EventID   *openapi_types.UUID `json:"eventID,omitempty"`
+	Host      *string             `json:"host,omitempty"`
+	Started   *uint32             `json:"started,omitempty"`
+	Terminal  *string             `json:"terminal,omitempty"`
+	User      *string             `json:"user,omitempty"`
 }
 
-// NotFoundError defines model for NotFoundError.
-type NotFoundError struct {
-	Error   *string `json:"error,omitempty"`
-	Message *string `json:"message,omitempty"`
+// BeaconId Unique identifier of the beacon on UUID format
+type BeaconId = openapi_types.UUID
+
+// EventId Unique identifier of the event on UUID format
+type EventId = openapi_types.UUID
+
+// GroupId Unique identifier of the group on UUID format
+type GroupId = openapi_types.UUID
+
+// RecipientId Unique identifier of the recipient on UUID format
+type RecipientId = openapi_types.UUID
+
+// Error defines model for Error.
+type Error struct {
+	// Code A unique error code for the specific type of error
+	Code string `json:"code"`
+
+	// Message A human-readable error message describing the error
+	Message string `json:"message"`
+}
+
+// AddRecipientsToGroup defines model for AddRecipientsToGroup.
+type AddRecipientsToGroup = []openapi_types.UUID
+
+// CreateGroup defines model for CreateGroup.
+type CreateGroup struct {
+	Description string `json:"description"`
+	Name        string `json:"name"`
+}
+
+// CreateRecipient defines model for CreateRecipient.
+type CreateRecipient struct {
+	ContactInfo string  `json:"contactInfo"`
+	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name"`
+	Type        string  `json:"type"`
+}
+
+// UpdateGroup defines model for UpdateGroup.
+type UpdateGroup struct {
+	Description string `json:"description"`
+	Name        string `json:"name"`
+}
+
+// UpdateRecipient defines model for UpdateRecipient.
+type UpdateRecipient struct {
+	ContactInfo string  `json:"contactInfo"`
+	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name"`
+	Type        string  `json:"type"`
+}
+
+// PostGroupsJSONBody defines parameters for PostGroups.
+type PostGroupsJSONBody struct {
+	Description string `json:"description"`
+	Name        string `json:"name"`
+}
+
+// PutGroupsGroupIdJSONBody defines parameters for PutGroupsGroupId.
+type PutGroupsGroupIdJSONBody struct {
+	Description string `json:"description"`
+	Name        string `json:"name"`
+}
+
+// PostGroupsGroupIdRecipientsJSONBody defines parameters for PostGroupsGroupIdRecipients.
+type PostGroupsGroupIdRecipientsJSONBody = []openapi_types.UUID
+
+// PostRecipientsJSONBody defines parameters for PostRecipients.
+type PostRecipientsJSONBody struct {
+	ContactInfo string  `json:"contactInfo"`
+	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name"`
+	Type        string  `json:"type"`
+}
+
+// PutRecipientsRecipientIdJSONBody defines parameters for PutRecipientsRecipientId.
+type PutRecipientsRecipientIdJSONBody struct {
+	ContactInfo string  `json:"contactInfo"`
+	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name"`
+	Type        string  `json:"type"`
 }
 
 // PostGroupsJSONRequestBody defines body for PostGroups for application/json ContentType.
-type PostGroupsJSONRequestBody = Group
+type PostGroupsJSONRequestBody PostGroupsJSONBody
 
 // PutGroupsGroupIdJSONRequestBody defines body for PutGroupsGroupId for application/json ContentType.
-type PutGroupsGroupIdJSONRequestBody = Group
+type PutGroupsGroupIdJSONRequestBody PutGroupsGroupIdJSONBody
+
+// PostGroupsGroupIdRecipientsJSONRequestBody defines body for PostGroupsGroupIdRecipients for application/json ContentType.
+type PostGroupsGroupIdRecipientsJSONRequestBody = PostGroupsGroupIdRecipientsJSONBody
 
 // PostRecipientsJSONRequestBody defines body for PostRecipients for application/json ContentType.
-type PostRecipientsJSONRequestBody = Recipient
+type PostRecipientsJSONRequestBody PostRecipientsJSONBody
 
 // PutRecipientsRecipientIdJSONRequestBody defines body for PutRecipientsRecipientId for application/json ContentType.
-type PutRecipientsRecipientIdJSONRequestBody = Recipient
+type PutRecipientsRecipientIdJSONRequestBody PutRecipientsRecipientIdJSONBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// List all beacons
 	// (GET /beacons)
 	GetBeacons(c *gin.Context)
-	// Delete a beacon by ID
-	// (DELETE /beacons/{beaconId})
-	DeleteBeaconsBeaconId(c *gin.Context, beaconId openapi_types.UUID)
 	// Get a specific beacon by ID
 	// (GET /beacons/{beaconId})
-	GetBeaconsBeaconId(c *gin.Context, beaconId openapi_types.UUID)
+	GetBeaconsBeaconId(c *gin.Context, beaconId BeaconId)
+	// Retrieve a specific event by ID
+	// (GET /events/{eventId})
+	GetEventsEventId(c *gin.Context, eventId EventId)
+	// Retrieve the group for a specific event
+	// (GET /events/{eventId}/group)
+	GetEventsEventIdGroup(c *gin.Context, eventId EventId)
+	// Retrieve a list of recipients for a specific event
+	// (GET /events/{eventId}/recipients)
+	GetEventsEventIdRecipients(c *gin.Context, eventId EventId)
 	// List all groups
 	// (GET /groups)
 	GetGroups(c *gin.Context)
@@ -131,13 +308,22 @@ type ServerInterface interface {
 	PostGroups(c *gin.Context)
 	// Delete a group by ID
 	// (DELETE /groups/{groupId})
-	DeleteGroupsGroupId(c *gin.Context, groupId openapi_types.UUID)
-	// Get a specific group by ID
+	DeleteGroupsGroupId(c *gin.Context, groupId GroupId)
+	// Retrieve a specific group by ID
 	// (GET /groups/{groupId})
-	GetGroupsGroupId(c *gin.Context, groupId openapi_types.UUID)
-	// Update an existing group
+	GetGroupsGroupId(c *gin.Context, groupId GroupId)
+	// Update a group's name, description, and recipient list
 	// (PUT /groups/{groupId})
-	PutGroupsGroupId(c *gin.Context, groupId openapi_types.UUID)
+	PutGroupsGroupId(c *gin.Context, groupId GroupId)
+	// List all events for a group
+	// (GET /groups/{groupId}/events)
+	GetGroupsGroupIdEvents(c *gin.Context, groupId GroupId)
+	// Add a recipient to a group
+	// (POST /groups/{groupId}/recipients)
+	PostGroupsGroupIdRecipients(c *gin.Context, groupId GroupId)
+	// Remove a recipient from a group
+	// (DELETE /groups/{groupId}/recipients/{recipientId})
+	DeleteGroupsGroupIdRecipientsRecipientId(c *gin.Context, groupId GroupId, recipientId RecipientId)
 	// List all recipients
 	// (GET /recipients)
 	GetRecipients(c *gin.Context)
@@ -146,13 +332,13 @@ type ServerInterface interface {
 	PostRecipients(c *gin.Context)
 	// Delete a recipient by ID
 	// (DELETE /recipients/{recipientId})
-	DeleteRecipientsRecipientId(c *gin.Context, recipientId openapi_types.UUID)
+	DeleteRecipientsRecipientId(c *gin.Context, recipientId RecipientId)
 	// Get a specific recipient by ID
 	// (GET /recipients/{recipientId})
-	GetRecipientsRecipientId(c *gin.Context, recipientId openapi_types.UUID)
+	GetRecipientsRecipientId(c *gin.Context, recipientId RecipientId)
 	// Update an existing recipient
 	// (PUT /recipients/{recipientId})
-	PutRecipientsRecipientId(c *gin.Context, recipientId openapi_types.UUID)
+	PutRecipientsRecipientId(c *gin.Context, recipientId RecipientId)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -167,32 +353,13 @@ type MiddlewareFunc func(c *gin.Context)
 // GetBeacons operation middleware
 func (siw *ServerInterfaceWrapper) GetBeacons(c *gin.Context) {
 
+	c.Set(BearerAuthScopes, []string{""})
+
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 	}
 
 	siw.Handler.GetBeacons(c)
-}
-
-// DeleteBeaconsBeaconId operation middleware
-func (siw *ServerInterfaceWrapper) DeleteBeaconsBeaconId(c *gin.Context) {
-
-	var err error
-
-	// ------------- Path parameter "beaconId" -------------
-	var beaconId openapi_types.UUID
-
-	err = runtime.BindStyledParameter("simple", false, "beaconId", c.Param("beaconId"), &beaconId)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter beaconId: %s", err), http.StatusBadRequest)
-		return
-	}
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-	}
-
-	siw.Handler.DeleteBeaconsBeaconId(c, beaconId)
 }
 
 // GetBeaconsBeaconId operation middleware
@@ -201,13 +368,15 @@ func (siw *ServerInterfaceWrapper) GetBeaconsBeaconId(c *gin.Context) {
 	var err error
 
 	// ------------- Path parameter "beaconId" -------------
-	var beaconId openapi_types.UUID
+	var beaconId BeaconId
 
 	err = runtime.BindStyledParameter("simple", false, "beaconId", c.Param("beaconId"), &beaconId)
 	if err != nil {
 		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter beaconId: %s", err), http.StatusBadRequest)
 		return
 	}
+
+	c.Set(BearerAuthScopes, []string{""})
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -216,8 +385,79 @@ func (siw *ServerInterfaceWrapper) GetBeaconsBeaconId(c *gin.Context) {
 	siw.Handler.GetBeaconsBeaconId(c, beaconId)
 }
 
+// GetEventsEventId operation middleware
+func (siw *ServerInterfaceWrapper) GetEventsEventId(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "eventId" -------------
+	var eventId EventId
+
+	err = runtime.BindStyledParameter("simple", false, "eventId", c.Param("eventId"), &eventId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter eventId: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.GetEventsEventId(c, eventId)
+}
+
+// GetEventsEventIdGroup operation middleware
+func (siw *ServerInterfaceWrapper) GetEventsEventIdGroup(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "eventId" -------------
+	var eventId EventId
+
+	err = runtime.BindStyledParameter("simple", false, "eventId", c.Param("eventId"), &eventId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter eventId: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.GetEventsEventIdGroup(c, eventId)
+}
+
+// GetEventsEventIdRecipients operation middleware
+func (siw *ServerInterfaceWrapper) GetEventsEventIdRecipients(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "eventId" -------------
+	var eventId EventId
+
+	err = runtime.BindStyledParameter("simple", false, "eventId", c.Param("eventId"), &eventId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter eventId: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.GetEventsEventIdRecipients(c, eventId)
+}
+
 // GetGroups operation middleware
 func (siw *ServerInterfaceWrapper) GetGroups(c *gin.Context) {
+
+	c.Set(BearerAuthScopes, []string{""})
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -242,13 +482,15 @@ func (siw *ServerInterfaceWrapper) DeleteGroupsGroupId(c *gin.Context) {
 	var err error
 
 	// ------------- Path parameter "groupId" -------------
-	var groupId openapi_types.UUID
+	var groupId GroupId
 
 	err = runtime.BindStyledParameter("simple", false, "groupId", c.Param("groupId"), &groupId)
 	if err != nil {
 		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter groupId: %s", err), http.StatusBadRequest)
 		return
 	}
+
+	c.Set(BearerAuthScopes, []string{""})
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -263,13 +505,15 @@ func (siw *ServerInterfaceWrapper) GetGroupsGroupId(c *gin.Context) {
 	var err error
 
 	// ------------- Path parameter "groupId" -------------
-	var groupId openapi_types.UUID
+	var groupId GroupId
 
 	err = runtime.BindStyledParameter("simple", false, "groupId", c.Param("groupId"), &groupId)
 	if err != nil {
 		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter groupId: %s", err), http.StatusBadRequest)
 		return
 	}
+
+	c.Set(BearerAuthScopes, []string{""})
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -284,13 +528,15 @@ func (siw *ServerInterfaceWrapper) PutGroupsGroupId(c *gin.Context) {
 	var err error
 
 	// ------------- Path parameter "groupId" -------------
-	var groupId openapi_types.UUID
+	var groupId GroupId
 
 	err = runtime.BindStyledParameter("simple", false, "groupId", c.Param("groupId"), &groupId)
 	if err != nil {
 		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter groupId: %s", err), http.StatusBadRequest)
 		return
 	}
+
+	c.Set(BearerAuthScopes, []string{""})
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -299,8 +545,88 @@ func (siw *ServerInterfaceWrapper) PutGroupsGroupId(c *gin.Context) {
 	siw.Handler.PutGroupsGroupId(c, groupId)
 }
 
+// GetGroupsGroupIdEvents operation middleware
+func (siw *ServerInterfaceWrapper) GetGroupsGroupIdEvents(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "groupId" -------------
+	var groupId GroupId
+
+	err = runtime.BindStyledParameter("simple", false, "groupId", c.Param("groupId"), &groupId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter groupId: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.GetGroupsGroupIdEvents(c, groupId)
+}
+
+// PostGroupsGroupIdRecipients operation middleware
+func (siw *ServerInterfaceWrapper) PostGroupsGroupIdRecipients(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "groupId" -------------
+	var groupId GroupId
+
+	err = runtime.BindStyledParameter("simple", false, "groupId", c.Param("groupId"), &groupId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter groupId: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.PostGroupsGroupIdRecipients(c, groupId)
+}
+
+// DeleteGroupsGroupIdRecipientsRecipientId operation middleware
+func (siw *ServerInterfaceWrapper) DeleteGroupsGroupIdRecipientsRecipientId(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "groupId" -------------
+	var groupId GroupId
+
+	err = runtime.BindStyledParameter("simple", false, "groupId", c.Param("groupId"), &groupId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter groupId: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Path parameter "recipientId" -------------
+	var recipientId RecipientId
+
+	err = runtime.BindStyledParameter("simple", false, "recipientId", c.Param("recipientId"), &recipientId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter recipientId: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.DeleteGroupsGroupIdRecipientsRecipientId(c, groupId, recipientId)
+}
+
 // GetRecipients operation middleware
 func (siw *ServerInterfaceWrapper) GetRecipients(c *gin.Context) {
+
+	c.Set(BearerAuthScopes, []string{""})
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -311,6 +637,8 @@ func (siw *ServerInterfaceWrapper) GetRecipients(c *gin.Context) {
 
 // PostRecipients operation middleware
 func (siw *ServerInterfaceWrapper) PostRecipients(c *gin.Context) {
+
+	c.Set(BearerAuthScopes, []string{""})
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -325,13 +653,15 @@ func (siw *ServerInterfaceWrapper) DeleteRecipientsRecipientId(c *gin.Context) {
 	var err error
 
 	// ------------- Path parameter "recipientId" -------------
-	var recipientId openapi_types.UUID
+	var recipientId RecipientId
 
 	err = runtime.BindStyledParameter("simple", false, "recipientId", c.Param("recipientId"), &recipientId)
 	if err != nil {
 		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter recipientId: %s", err), http.StatusBadRequest)
 		return
 	}
+
+	c.Set(BearerAuthScopes, []string{""})
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -346,13 +676,15 @@ func (siw *ServerInterfaceWrapper) GetRecipientsRecipientId(c *gin.Context) {
 	var err error
 
 	// ------------- Path parameter "recipientId" -------------
-	var recipientId openapi_types.UUID
+	var recipientId RecipientId
 
 	err = runtime.BindStyledParameter("simple", false, "recipientId", c.Param("recipientId"), &recipientId)
 	if err != nil {
 		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter recipientId: %s", err), http.StatusBadRequest)
 		return
 	}
+
+	c.Set(BearerAuthScopes, []string{""})
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -367,13 +699,15 @@ func (siw *ServerInterfaceWrapper) PutRecipientsRecipientId(c *gin.Context) {
 	var err error
 
 	// ------------- Path parameter "recipientId" -------------
-	var recipientId openapi_types.UUID
+	var recipientId RecipientId
 
 	err = runtime.BindStyledParameter("simple", false, "recipientId", c.Param("recipientId"), &recipientId)
 	if err != nil {
 		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter recipientId: %s", err), http.StatusBadRequest)
 		return
 	}
+
+	c.Set(BearerAuthScopes, []string{""})
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -413,9 +747,13 @@ func RegisterHandlersWithOptions(router *gin.Engine, si ServerInterface, options
 
 	router.GET(options.BaseURL+"/beacons", wrapper.GetBeacons)
 
-	router.DELETE(options.BaseURL+"/beacons/:beaconId", wrapper.DeleteBeaconsBeaconId)
-
 	router.GET(options.BaseURL+"/beacons/:beaconId", wrapper.GetBeaconsBeaconId)
+
+	router.GET(options.BaseURL+"/events/:eventId", wrapper.GetEventsEventId)
+
+	router.GET(options.BaseURL+"/events/:eventId/group", wrapper.GetEventsEventIdGroup)
+
+	router.GET(options.BaseURL+"/events/:eventId/recipients", wrapper.GetEventsEventIdRecipients)
 
 	router.GET(options.BaseURL+"/groups", wrapper.GetGroups)
 
@@ -426,6 +764,12 @@ func RegisterHandlersWithOptions(router *gin.Engine, si ServerInterface, options
 	router.GET(options.BaseURL+"/groups/:groupId", wrapper.GetGroupsGroupId)
 
 	router.PUT(options.BaseURL+"/groups/:groupId", wrapper.PutGroupsGroupId)
+
+	router.GET(options.BaseURL+"/groups/:groupId/events", wrapper.GetGroupsGroupIdEvents)
+
+	router.POST(options.BaseURL+"/groups/:groupId/recipients", wrapper.PostGroupsGroupIdRecipients)
+
+	router.DELETE(options.BaseURL+"/groups/:groupId/recipients/:recipientId", wrapper.DeleteGroupsGroupIdRecipientsRecipientId)
 
 	router.GET(options.BaseURL+"/recipients", wrapper.GetRecipients)
 
@@ -443,28 +787,44 @@ func RegisterHandlersWithOptions(router *gin.Engine, si ServerInterface, options
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/8xZbW/bNhD+KwS3j3Ikv8Rt/WlOkwYBujRoHQxbUQy0dLZZSCRHUk1cw/99ICnLerMt",
-	"b47bbzLFe3vu7rlTssIhTwRnwLTCoxWWoARnCuyPd1xOaRQBu5GSS3MScqaBafNIhIhpSDTlzP+qODNn",
-	"KlxAQsyTkFyA1NQpgo18BDOSxhqPtrqxh+GZJCKGyqleCnOktKRsjtceTkApMoeynj95iogExLhGJNUL",
-	"Lul3iJDmiIQhKIX0giokQfFUhlAydrRoxaN1fsKnXyHUeG2OIlChpMLgcryNtYfvuX7HUxa9AOb3XCOr",
-	"uwRD8bQd5pMFIAn/pKA0RLnz6IkoG+esZqKlwH/At5VmI+ZgsshcAQkddiSOP8zw6PMK/yphhkf4F3/b",
-	"Dn4m4k+AEaaviILfeQQxXntVrMcyXFjM84ifXw//Hg6aEHXW76Ly/W6vD4PL4asOvH4z7XR7Ub9DBpfD",
-	"zqA3HF5eDgZBEATYwzMuE2JSkKa0MV+3kqfixZR/p6KkWcsU8ntTzmMgzFz88KnswB+URfxJNen8CIJL",
-	"PY4iWRZZaC1Gvp8dXIQ88aW92qTkkyaahq1cm0jClNVTM9ek+VE8t1L7KJ7fwzeIS5ff5Dcp0zAH2VTT",
-	"XzZZO2VBuiKzj1RDYh/2acxaYusdkZIsze/rYrsVERujufEazbhEGpQ2gDUAeE8SKAtOQGnkIm64/yAp",
-	"l1QvSzLdOpCmckIq6GZwtQozF6lH2pyYrcAJk/OWM01CfcdmvIyMgfG3QsU34bMnH3Lj7KGcWPDbo+Zy",
-	"1VAb9dzmeKFuk+GJPSgK3CSExm2o32SjCm1t5r2VQDRE40pz94JevxP0O71Xk25/FASjIPiryHcR0dDR",
-	"NIFmwGPIdZbNZa/a8Q6tYlX06vI4r9YeNkOPSmP8s9Ode4q/1MDz8N31y4wEl5KX0v4ookP5HByNXMNO",
-	"QbNWLO8WN84gGj/c2Y5KCCNzyuZomrGrhzXV1iPHn+Ym9vA3kMpp6F4EF4EJhAtgRFA8wn175GFB9MIW",
-	"kT/dcvUcbKSmxuySZwY5vgV9lRss7ee9IDhqQfxfo6C+e41RTJVGfJYDYhetNEmIXOIRfm/ekjguvd6E",
-	"66+m2SK0dsib2q0H72o6iz9fnWo4DOrZM5uhM2G3QWcgQiq1e/csjeNlxV9nC5GN2HSJ7q4NEAfSstut",
-	"49LTJivNG/B087YYzi1oRJASENIZDWtBCSJJAhqksiONGl2mKLGHmeV1PC3GtWEbx29bp0/d9Jbo/Xk+",
-	"oXZhn82wc3TEjvm3ryEy/3f0w+athwVXDeE9cFWMz37dXPFoebJqyiIqzxGT2XUNz+5LGK1XcOgmt4Om",
-	"gpub6oggBk+FC1mR+Ku5++ZpwSMO1M03UlsWcXvusSTipA5yyAGXgvPA3wR7hT8q8Rymj3khpvOxh4dF",
-	"2tRSaQPSP7SxzpTZ1K1QjRl26xUiDMEztV8LxfaSpe+rXfVb+Ao7Bxfv+4Lbw8eFWHZwcvHGPl6uxHv6",
-	"EipEeF5+rhjezdGycHEnT5cvFYrJX+XPrTh7C/jHrVxr7t5+E+/mbw8PnHgTOrkZv/yH2R2sv7V3kPlb",
-	"BhacL8Gy2FyDoH8Yk8p/CE4BZWXsNAB6ePTICqA/w/jZne4fziFnLLHNOPopSq1h/hVpa73+NwAA//92",
-	"AIGaHhsAAA==",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
