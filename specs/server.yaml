@@ -84,8 +84,7 @@ paths:
         - bearerAuth: [ ]
       requestBody:
         required: true
-        $ref: '#/components/requestBodies/UpdateRecipient'
-
+        $ref: '#/components/requestBodies/CreateRecipient'
       responses:
         '201':
           description: The created recipient
@@ -202,7 +201,7 @@ paths:
         - bearerAuth: [ ]
       requestBody:
         required: true
-        $ref: '#/components/requestBodies/CreateGroup'
+        $ref: '#/components/requestBodies/UpdateGroup'
       responses:
         '200':
           description: The updated group
@@ -277,8 +276,12 @@ paths:
       security:
         - bearerAuth: [ ]
       responses:
-        '204':
-          description: No Content
+        '200':
+          description: The recipient was removed from the group
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Group'
         default:
           $ref: '#/components/responses/Error'
   /events/{eventId}:
@@ -585,12 +588,41 @@ components:
               - code
               - message
   requestBodies:
+    CreateRecipient:
+      description: Create a new recipient
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - type
+              - contactInfo
+            properties:
+              name:
+                type: string
+                minLength: 2
+                maxLength: 50
+                example: Mr Recipient
+              description:
+                type: string
+                example: A description of the recipient
+              type:
+                type: string
+                example: Email
+              contactInfo:
+                type: string
+                example:
     UpdateRecipient:
       description: Update an existing recipient
       content:
         application/json:
           schema:
             type: object
+            required:
+              - name
+              - type
+              - contactInfo
             properties:
               name:
                 type: string
@@ -621,6 +653,9 @@ components:
         application/json:
           schema:
             type: object
+            required:
+              - name
+              - description
             properties:
               name:
                 type: string
@@ -630,15 +665,15 @@ components:
               description:
                 type: string
                 example: A description of my resource
-            required:
-              - name
-              - description
     UpdateGroup:
       description: Update an existing group
       content:
         application/json:
           schema:
             type: object
+            required:
+              - name
+              - description
             properties:
               name:
                 type: string
@@ -648,14 +683,6 @@ components:
               description:
                 type: string
                 example: A new description of my resource
-              recipientIds:
-                type: array
-                items:
-                  type: string
-                example: [ "123e4567-e89b-12d3-a456-426655440000", "123e4567-e89b-12d3-a456-426655440001" ]
-            required:
-              - name
-              - description
   parameters:
     beaconId:
       name: beaconId
