@@ -1,11 +1,10 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"github.com/projectdiscovery/goflags"
 	"gopkg.in/yaml.v3"
 	"os"
-	"strings"
 )
 
 type OpenAPISpec struct {
@@ -14,45 +13,55 @@ type OpenAPISpec struct {
 	Paths      map[string]interface{}   `yaml:"paths"`
 	Components map[string]interface{}   `yaml:"components"`
 	Tags       []map[string]interface{} `yaml:"tags"`
+	Servers    []map[string]interface{} `yaml:"servers"`
+}
+
+type CliArgs struct {
+	SourceFile  string
+	TargetFiles goflags.StringSlice
+	IgnoredKeys goflags.StringSlice
+	Merge       goflags.StringSlice
+	OutputFile  string
 }
 
 func main() {
-	sourceFile := flag.String("s", "specs/creator.yaml", "OpenApi Spec file to merge from (source)")
-	targetFile := flag.String("t", "specs/server.yaml", "OpenApi Spec file to merge into (target)")
-	infoFile := flag.String("i", "specs/gateway_info.yaml", "OpenApi file with info section to use")
-	outputFile := flag.String("o", "specs/gateway.yaml", "Where to save the merged OpenApi Spec file")
-	ignoreKeys := flag.String("ignore", "/healthz", "comma separated list of keys to ignore when merging")
-	flag.Parse()
+	args := CliArgs{}
+	flagSet := goflags.NewFlagSet()
+	flagSet.StringVarP(&args.SourceFile, "source", "s", "specs/gateway.yaml", "OpenApi Spec file to merge from (source)")
+	flagSet.StringSliceVarP(&args.TargetFiles, "target", "t", []string{"specs/server.yaml", "specs/creator.yaml"}, "OpenApi Spec files to merge into (target)", goflags.CommaSeparatedStringSliceOptions)
+	flagSet.StringSliceVarP(&args.IgnoredKeys, "ignore", "i", []string{"/healthz"}, "Keys to ignore when merging", goflags.CommaSeparatedStringSliceOptions)
+	flagSet.StringVarP(&args.OutputFile, "output", "o", "specs/gateway_merged.yaml", "Output file for the merged OpenApi Spec")
+	flagSet.StringSliceVarP(&args.Merge, "merge", "m", []string{"paths", "components", "tags", "servers"}, "Keys to merge when merging. Keys are separated by a comma. If no keys are specified, all keys will be merged. Available keys are 'paths', 'components', 'tags', 'servers'", goflags.CommaSeparatedStringSliceOptions)
+	flagSet.Parse()
 	// convert ignoreKeys to map
-	ignoreKeysMap := make(map[string]any)
-	for _, key := range strings.Split(*ignoreKeys, ",") {
-		ignoreKeysMap[key] = nil
+	ignoreKeys := make(map[string]any)
+	for _, key := range args.IgnoredKeys {
+		ignoreKeys[key] = nil
 	}
-	if err := Run(*sourceFile, *targetFile, *infoFile, *outputFile, ignoreKeysMap); err != nil {
+	// convert merge to map
+	mergeKeys := make(map[string]any)
+	for _, key := range args.Merge {
+		mergeKeys[key] = nil
+	}
+
+	if err := Run(args.SourceFile, args.TargetFiles, args.OutputFile, ignoreKeys, mergeKeys); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 }
 
-func Run(sourceFile, targetFile, infoFile, resultFile string, ignoreKeys map[string]any) error {
-	sourceData, targetData, err := ParseSpecFiles(sourceFile, targetFile)
+func Run(sourceFile string, targetFiles []string, outFile string, ignoreKeys map[string]any, mergeKeys map[string]any) error {
+	sourceData, targetData, err := ParseSpecFiles(sourceFile, targetFiles)
 	if err != nil {
 		return fmt.Errorf("error parsing spec files: %s", err)
 	}
 	// mergeOpenApiSpec the components recursively
-	mergeOpenApiSpec(sourceData, targetData, ignoreKeys)
-
-	if infoFile != "" {
-		infoData, err := ParseSpecFile(infoFile)
-		if err != nil {
-			return fmt.Errorf("error parsing info file, %s, error: %s", infoFile)
-		}
-		// overwrite the info section
-		targetData.Info = infoData.Info
+	for _, data := range targetData {
+		mergeOpenApiSpec(sourceData, data, ignoreKeys, mergeKeys)
 	}
 
 	// write the result to a file
-	if err := SaveResult(resultFile, targetData); err != nil {
+	if err := SaveResult(outFile, sourceData); err != nil {
 		return fmt.Errorf("error saving result: %s", err)
 	}
 	return nil
@@ -87,25 +96,37 @@ func ParseSpecFile(specFile string) (*OpenAPISpec, error) {
 	return data, nil
 }
 
-func ParseSpecFiles(sourceFile string, targetFile string) (*OpenAPISpec, *OpenAPISpec, error) {
+func ParseSpecFiles(sourceFile string, targetFiles []string) (*OpenAPISpec, []*OpenAPISpec, error) {
 	sourceData, err := ParseSpecFile(sourceFile)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error parsing source file:%s, error: %s", sourceFile, err)
 	}
-	targetData, err := ParseSpecFile(targetFile)
-	if err != nil {
-		return nil, nil, fmt.Errorf("error parsing target file:%s, error: %s", targetFile, err)
+	var targetList []*OpenAPISpec
+	for _, targetFile := range targetFiles {
+		targetData, err := ParseSpecFile(targetFile)
+		if err != nil {
+			return nil, nil, fmt.Errorf("error parsing target file:%s, error: %s", targetFile, err)
+		}
+		targetList = append(targetList, targetData)
 	}
-	return sourceData, targetData, nil
+	return sourceData, targetList, nil
 }
 
-func mergeOpenApiSpec(source *OpenAPISpec, target *OpenAPISpec, ignoreKeys map[string]any) {
-	merge(source.Components, target.Components, ignoreKeys)
-	merge(source.Paths, target.Paths, ignoreKeys)
-	mergeTags(source.Tags, target.Tags, ignoreKeys)
-
+func mergeOpenApiSpec(source, target *OpenAPISpec, ignoreKeys, mergeKeys map[string]any) {
+	if _, ok := mergeKeys["servers"]; ok {
+		mergeList(target.Servers, source.Servers, ignoreKeys)
+	}
+	if _, ok := mergeKeys["components"]; ok {
+		merge(target.Components, source.Components, ignoreKeys)
+	}
+	if _, ok := mergeKeys["paths"]; ok {
+		merge(target.Paths, source.Paths, ignoreKeys)
+	}
+	if _, ok := mergeKeys["tags"]; ok {
+		mergeList(target.Tags, source.Tags, ignoreKeys)
+	}
 }
-func mergeTags(source []map[string]interface{}, target []map[string]interface{}, ignoreKeys map[string]any) {
+func mergeList(source []map[string]interface{}, target []map[string]interface{}, ignoreKeys map[string]any) {
 	for _, value := range source {
 		target = append(target, value)
 	}
