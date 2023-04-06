@@ -877,7 +877,17 @@ components:
       bearerFormat: JWT
       scheme: bearer
       type: http
-tags: []
+tags:
+  - description: Endpoints related to beacons
+    name: beacons
+  - description: Endpoints related to recipients
+    name: recipients
+  - description: Endpoints related to groups
+    name: groups
+  - description: API for creating beacons
+    name: Creator
+  - description: API for checking server health
+    name: Health
 servers:
   - description: The WebSocket server
     url: ws://127.0.0.1:9000/ws

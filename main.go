@@ -89,7 +89,9 @@ func ParseSpecFile(specFile string) (*OpenAPISpec, error) {
 	}
 	defer file.Close()
 	decoder := yaml.NewDecoder(file)
-	data := &OpenAPISpec{}
+	data := &OpenAPISpec{
+		Tags: make([]map[string]interface{}, 0),
+	}
 	if err = decoder.Decode(data); err != nil {
 		return nil, fmt.Errorf("error decoding file: %s", err)
 	}
@@ -114,7 +116,7 @@ func ParseSpecFiles(sourceFile string, targetFiles []string) (*OpenAPISpec, []*O
 
 func mergeOpenApiSpec(source, target *OpenAPISpec, ignoreKeys, mergeKeys map[string]any) {
 	if _, ok := mergeKeys["servers"]; ok {
-		mergeList(target.Servers, source.Servers, ignoreKeys)
+		mergeServers(target.Servers, source)
 	}
 	if _, ok := mergeKeys["components"]; ok {
 		merge(target.Components, source.Components, ignoreKeys)
@@ -123,12 +125,17 @@ func mergeOpenApiSpec(source, target *OpenAPISpec, ignoreKeys, mergeKeys map[str
 		merge(target.Paths, source.Paths, ignoreKeys)
 	}
 	if _, ok := mergeKeys["tags"]; ok {
-		mergeList(target.Tags, source.Tags, ignoreKeys)
+		mergeTags(target.Tags, source)
 	}
 }
-func mergeList(source []map[string]interface{}, target []map[string]interface{}, ignoreKeys map[string]any) {
+func mergeTags(source []map[string]interface{}, spec *OpenAPISpec) {
 	for _, value := range source {
-		target = append(target, value)
+		spec.Tags = append(spec.Tags, value)
+	}
+}
+func mergeServers(source []map[string]interface{}, spec *OpenAPISpec) {
+	for _, value := range source {
+		spec.Servers = append(spec.Servers, value)
 	}
 }
 
