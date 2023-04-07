@@ -56,7 +56,7 @@ paths:
               format: binary
       responses:
         '200':
-          description: a beacon created from the submitted binary
+          description: A beacon created from the submitted binary
           content:
             application/octet-stream:
               schema:

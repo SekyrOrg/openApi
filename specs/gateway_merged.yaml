@@ -69,7 +69,7 @@ paths:
               schema:
                 format: binary
                 type: string
-          description: a beacon created from the submitted binary
+          description: A beacon created from the submitted binary
         default:
           $ref: '#/components/responses/Error'
       security:
