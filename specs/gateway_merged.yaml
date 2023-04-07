@@ -95,6 +95,42 @@ paths:
       summary: List all supported OS and Arch combinations
       tags:
         - Creator
+  /events:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Event'
+                type: array
+          description: A list of events
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
+      summary: List all events
+      tags:
+        - events
+    post:
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              format: binary
+              type: string
+        required: true
+      responses:
+        "201":
+          description: The created event
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
+      summary: Create a new event
+      tags:
+        - events
   /events/{eventId}:
     get:
       responses:
