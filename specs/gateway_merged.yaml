@@ -909,10 +909,6 @@ components:
       in: header
       name: X-API-Key
       type: apiKey
-    bearerAuth:
-      bearerFormat: JWT
-      scheme: bearer
-      type: http
 tags:
   - description: Endpoints related to beacons
     name: beacons
