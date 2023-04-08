@@ -7,6 +7,8 @@ info:
 servers:
   - url: ws://127.0.0.1:9000/ws
     description: The WebSocket server
+  - url: http://127.0.0.1:9000
+    description: The HTTP server
 paths:
   /ws:
     get:

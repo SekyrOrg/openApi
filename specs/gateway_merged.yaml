@@ -927,3 +927,5 @@ tags:
 servers:
   - description: The WebSocket server
     url: ws://127.0.0.1:9000/ws
+  - description: The HTTP server
+    url: http://127.0.0.1:9000
