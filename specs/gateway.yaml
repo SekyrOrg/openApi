@@ -5,10 +5,8 @@ info:
   description: A gateway for managing differnt APIs
   version: 1.0.0
 servers:
-  - url: ws://127.0.0.1:9000/ws
-    description: The WebSocket server
   - url: http://127.0.0.1:9000
-    description: The HTTP server
+    description: The API server
 paths:
   /ws:
     get:
