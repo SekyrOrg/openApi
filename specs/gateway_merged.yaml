@@ -316,6 +316,72 @@ paths:
       summary: Update a group's name, description, and recipient list
       tags:
         - groups
+  /groups/{groupId}/count/beacon:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: integer
+          description: The number of beacons in the group
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
+      security:
+        - bearerAuth: []
+      summary: Get the number of beacons in a group
+      tags:
+        - groups
+    parameters:
+      - $ref: '#/components/parameters/groupId'
+  /groups/{groupId}/count/event:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: integer
+          description: The number of events in the group
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
+      security:
+        - bearerAuth: []
+      summary: Get the number of events in a group
+      tags:
+        - groups
+    parameters:
+      - $ref: '#/components/parameters/groupId'
+  /groups/{groupId}/count/recipients:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: integer
+          description: The number of recipients in the group
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
+      security:
+        - bearerAuth: []
+      summary: Get the number of recipients in a group
+      tags:
+        - groups
+    parameters:
+      - $ref: '#/components/parameters/groupId'
   /groups/{groupId}/events:
     get:
       responses:

@@ -259,6 +259,72 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMsg'
+  /groups/{groupId}/count/beacon:
+    parameters:
+      - $ref: '#/components/parameters/groupId'
+    get:
+      summary: Get the number of beacons in a group
+      tags:
+        - groups
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: The number of beacons in the group
+          content:
+            application/json:
+              schema:
+                type: integer
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+  /groups/{groupId}/count/event:
+    parameters:
+      - $ref: '#/components/parameters/groupId'
+    get:
+      summary: Get the number of events in a group
+      tags:
+        - groups
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: The number of events in the group
+          content:
+            application/json:
+              schema:
+                type: integer
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+  /groups/{groupId}/count/recipients:
+    parameters:
+      - $ref: '#/components/parameters/groupId'
+    get:
+      summary: Get the number of recipients in a group
+      tags:
+        - groups
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: The number of recipients in the group
+          content:
+            application/json:
+              schema:
+                type: integer
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
   /groups/{groupId}/events:
     parameters:
       - $ref: '#/components/parameters/groupId'
