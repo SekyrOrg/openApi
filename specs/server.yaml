@@ -28,7 +28,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Beacon'
         default:
-            $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
   /beacons/{beaconId}:
     parameters:
         - $ref: '#/components/parameters/beaconId'
@@ -46,18 +50,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Beacon'
         default:
-          $ref: '#/components/responses/Error'
- #   delete:
- #     summary: Delete a beacon by ID
- #     tags:
- #       - beacons
- #     security:
- #       - bearerAuth: [ ]
- #     responses:
- #       '204':
- #         description: The beacon was deleted successfully
- #       default:
- #         $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
   /recipients:
     get:
       summary: List all recipients
@@ -75,7 +72,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Recipient'
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
     post:
       summary: Create a new recipient
       tags:
@@ -93,7 +94,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Recipient'
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
   /recipients/{recipientId}:
     parameters:
       - $ref: '#/components/parameters/recipientId'
@@ -111,7 +116,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Recipient'
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
     put:
       summary: Update an existing recipient
       tags:
@@ -129,7 +138,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Recipient'
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
     delete:
       summary: Delete a recipient by ID
       tags:
@@ -140,7 +153,11 @@ paths:
         '204':
           description: The recipient was deleted successfully
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
   /groups:
     get:
       summary: List all groups
@@ -157,8 +174,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Group'
-        '404':
-          $ref: '#/components/responses/Error'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
     post:
       summary: Create a new group
       tags:
@@ -173,8 +194,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Group'
-        '404':
-          $ref: '#/components/responses/Error'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
   /groups/{groupId}:
     parameters:
       - $ref: '#/components/parameters/groupId'
@@ -192,7 +217,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Group'
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
     put:
       summary: Update a group's name, description, and recipient list
       tags:
@@ -210,7 +239,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Group'
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
     delete:
       summary: Delete a group by ID
       tags:
@@ -221,7 +254,11 @@ paths:
         '204':
           description: No Content
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
   /groups/{groupId}/events:
     parameters:
       - $ref: '#/components/parameters/groupId'
@@ -241,7 +278,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Event'
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
   /groups/{groupId}/recipients:
     parameters:
       - $ref: '#/components/parameters/groupId'
@@ -264,7 +305,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Recipient'
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
   /groups/{groupId}/recipients/{recipientId}:
     parameters:
       - $ref: '#/components/parameters/groupId'
@@ -283,7 +328,11 @@ paths:
               schema:
                $ref: '#/components/schemas/Group'
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
   /events:
     get:
       summary: List all events
@@ -301,7 +350,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Event'
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
     post:
       summary: Create a new event
       tags:
@@ -319,7 +372,11 @@ paths:
         '201':
           description: The created event
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
   /events/{eventId}:
     parameters:
       - $ref: '#/components/parameters/eventId'
@@ -337,7 +394,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
   /events/{eventId}/recipients:
         parameters:
             - $ref: '#/components/parameters/eventId'
@@ -357,7 +418,11 @@ paths:
                      items:
                        $ref: '#/components/schemas/Recipient'
             default:
-              $ref: '#/components/responses/Error'
+              description: Error response
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ErrorMsg'
   /events/{eventId}/group:
     parameters:
       - $ref: '#/components/parameters/eventId'
@@ -375,7 +440,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Group'
         default:
-          $ref: '#/components/responses/Error'
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
 components:
   securitySchemes:
     apiKeyAuth:
@@ -600,7 +669,23 @@ components:
               type: string
             ipAddresses:
               type: string
+    ErrorMsg:
+        type: object
+        properties:
+          code:
+            type: string
+            example: invalid_request
+            description: A unique error code for the specific type of error
+          message:
+            type: string
+            example: Invalid request parameters
+            description: A human-readable error message describing the error
+        required:
+            - code
+            - message
   responses:
+  requestBodies:
+
     Error:
       description: An error occurred
       content:
@@ -619,7 +704,6 @@ components:
             required:
               - code
               - message
-  requestBodies:
     CreateRecipient:
       description: Create a new recipient
       content:

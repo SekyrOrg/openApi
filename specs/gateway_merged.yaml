@@ -16,7 +16,11 @@ paths:
                 type: array
           description: A list of beacons
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: List all beacons
@@ -32,7 +36,11 @@ paths:
                 $ref: '#/components/schemas/Beacon'
           description: The beacon
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: Get a specific beacon by ID
@@ -107,7 +115,11 @@ paths:
                 type: array
           description: A list of events
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: List all events
@@ -125,7 +137,11 @@ paths:
         "201":
           description: The created event
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: Create a new event
@@ -141,7 +157,11 @@ paths:
                 $ref: '#/components/schemas/Event'
           description: The event
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: Retrieve a specific event by ID
@@ -159,7 +179,11 @@ paths:
                 $ref: '#/components/schemas/Group'
           description: The group
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: Retrieve the group for a specific event
@@ -179,7 +203,11 @@ paths:
                 type: array
           description: A list of recipients
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: Retrieve a list of recipients for a specific event
@@ -198,8 +226,12 @@ paths:
                   $ref: '#/components/schemas/Group'
                 type: array
           description: A list of groups
-        "404":
-          $ref: '#/components/responses/Error'
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: List all groups
@@ -216,8 +248,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Group'
           description: The created group
-        "404":
-          $ref: '#/components/responses/Error'
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       summary: Create a new group
       tags:
         - groups
@@ -227,7 +263,11 @@ paths:
         "204":
           description: No Content
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: Delete a group by ID
@@ -242,7 +282,11 @@ paths:
                 $ref: '#/components/schemas/Group'
           description: The group
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: Retrieve a specific group by ID
@@ -262,7 +306,11 @@ paths:
                 $ref: '#/components/schemas/Group'
           description: The updated group
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: Update a group's name, description, and recipient list
@@ -280,7 +328,11 @@ paths:
                 type: array
           description: A list of events
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: List all events for a group
@@ -305,7 +357,11 @@ paths:
                 type: array
           description: A list of recipients
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: Add a recipient to a group
@@ -321,7 +377,11 @@ paths:
                 $ref: '#/components/schemas/Group'
           description: The recipient was removed from the group
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: Remove a recipient from a group
@@ -342,7 +402,11 @@ paths:
                 type: array
           description: A list of recipients
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: List all recipients
@@ -360,7 +424,11 @@ paths:
                 $ref: '#/components/schemas/Recipient'
           description: The created recipient
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: Create a new recipient
@@ -372,7 +440,11 @@ paths:
         "204":
           description: The recipient was deleted successfully
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: Delete a recipient by ID
@@ -387,7 +459,11 @@ paths:
                 $ref: '#/components/schemas/Recipient'
           description: The recipient
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: Get a specific recipient by ID
@@ -407,7 +483,11 @@ paths:
                 $ref: '#/components/schemas/Recipient'
           description: The updated recipient
         default:
-          $ref: '#/components/responses/Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
       security:
         - bearerAuth: []
       summary: Update an existing recipient
@@ -612,6 +692,24 @@ components:
               - contactInfo
             type: object
       description: Create a new recipient
+    Error:
+      content:
+        application/json:
+          schema:
+            properties:
+              code:
+                description: A unique error code for the specific type of error
+                example: invalid_request
+                type: string
+              message:
+                description: A human-readable error message describing the error
+                example: Invalid request parameters
+                type: string
+            required:
+              - code
+              - message
+            type: object
+      description: An error occurred
     UpdateGroup:
       content:
         application/json:
@@ -720,6 +818,20 @@ components:
         os:
           example: Windows
           type: string
+      type: object
+    ErrorMsg:
+      properties:
+        code:
+          description: A unique error code for the specific type of error
+          example: invalid_request
+          type: string
+        message:
+          description: A human-readable error message describing the error
+          example: Invalid request parameters
+          type: string
+      required:
+        - code
+        - message
       type: object
     Event:
       allOf:

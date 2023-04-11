@@ -139,23 +139,29 @@ func mergeServers(source []map[string]interface{}, spec *OpenAPISpec) {
 	}
 }
 
-func merge(source map[string]interface{}, target map[string]interface{}, ignoreKeys map[string]any) {
-	for key, value := range source {
-		if _, ok := target[key]; ok {
-			// if the key exists in the target, check if it's a map
+func merge(from map[string]interface{}, into map[string]interface{}, ignoreKeys map[string]any) {
+	for key, value := range from {
+		if _, ok := into[key]; ok {
+			// if the key exists in the into, check if it's a map
 			if _, ok := value.(map[string]interface{}); !ok {
 				// if it's not a map, just overwrite the value
-				target[key] = value
+				into[key] = value
 				continue
 			}
 			// mergeOpenApiSpec the components recursively
-			merge(value.(map[string]interface{}), target[key].(map[string]interface{}), ignoreKeys)
+			m, ok := into[key].(map[string]interface{})
+			if !ok {
+				// if the key is not a map, just overwrite the value
+				into[key] = value
+				continue
+			}
+			merge(value.(map[string]interface{}), m, ignoreKeys)
 		} else {
 			// check if the key is in the ignore list
 			if _, exists := ignoreKeys[key]; exists {
 				continue
 			}
-			target[key] = value
+			into[key] = value
 		}
 	}
 }
