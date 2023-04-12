@@ -54,7 +54,6 @@ paths:
         - $ref: '#/components/parameters/ReportAddr'
         - $ref: '#/components/parameters/OS'
         - $ref: '#/components/parameters/Arch'
-        - $ref: '#/components/parameters/BeaconUUID'
         - $ref: '#/components/parameters/GroupUUID'
         - $ref: '#/components/parameters/Static'
         - $ref: '#/components/parameters/Upx'
@@ -576,14 +575,6 @@ components:
       required: true
       schema:
         example: x86_64
-        type: string
-    BeaconUUID:
-      description: The UUID of the beacon.
-      in: query
-      name: beacon_uuid
-      schema:
-        example: 123e4567-e89b-12d3-a456-426655440000
-        format: uuid
         type: string
     Debug:
       description: Include debug information in the beacon
