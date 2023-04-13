@@ -438,10 +438,8 @@ paths:
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/Recipient'
-                type: array
-          description: A list of recipients
+                $ref: '#/components/schemas/Group'
+          description: A list of recipients ids
         default:
           content:
             application/json:
@@ -450,7 +448,7 @@ paths:
           description: Error response
       security:
         - bearerAuth: []
-      summary: Add a recipient to a group
+      summary: Add a list of recipients to a group
       tags:
         - groups
   /groups/{groupId}/recipients/{recipientId}:
