@@ -406,6 +406,27 @@ paths:
     parameters:
       - $ref: '#/components/parameters/groupId'
   /groups/{groupId}/recipients:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Recipient'
+                  type: array
+          description: A list of recipients
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
+      security:
+        - bearerAuth: []
+      summary: List all recipients for a group
+      tags:
+        - groups
     parameters:
       - $ref: '#/components/parameters/groupId'
     post:
