@@ -168,6 +168,41 @@ paths:
         - events
     parameters:
       - $ref: '#/components/parameters/eventId'
+  /events/{eventId}/acknowledge:
+    parameters:
+      - $ref: '#/components/parameters/eventId'
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                reason:
+                  description: The reason or description for acknowledging the events.
+                  type: string
+              required:
+                - reason
+              type: object
+        description: The request body for acknowledging events.
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: The event was acknowledged
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
+      security:
+        - bearerAuth: []
+      summary: Acknowledge a specific event by ID
+      tags:
+        - events
   /events/{eventId}/group:
     get:
       responses:
@@ -214,6 +249,34 @@ paths:
         - events
     parameters:
       - $ref: '#/components/parameters/eventId'
+  /events/unacknowledged:
+    get:
+      parameters:
+        - description: which fields to load
+          in: query
+          name: load
+          schema:
+            type: boolean
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Event'
+                type: array
+          description: A list of events unacknowledged events
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+          description: Error response
+      security:
+        - bearerAuth: []
+      summary: List all events unacknowledged events
+      tags:
+        - events
   /groups:
     get:
       responses:

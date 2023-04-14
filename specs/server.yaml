@@ -462,6 +462,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMsg'
+  /events/unacknowledged:
+    get:
+      summary: List all events unacknowledged events
+      tags:
+        - events
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: load
+          in: query
+          description: which fields to load
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: A list of events unacknowledged events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
   /events/{eventId}:
     parameters:
       - $ref: '#/components/parameters/eventId'
@@ -530,6 +558,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMsg'
+  /events/{eventId}/acknowledge:
+    parameters:
+      - $ref: '#/components/parameters/eventId'
+    post:
+        summary: Acknowledge a specific event by ID
+        tags:
+            - events
+        security:
+            - bearerAuth: [ ]
+        requestBody:
+          required: true
+          description: The request body for acknowledging events.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reason:
+                    type: string
+                    description: The reason or description for acknowledging the events.
+                required:
+                  - reason
+        responses:
+            '200':
+              description: The event was acknowledged
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/Event'
+            default:
+              description: Error response
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ErrorMsg'
 components:
   securitySchemes:
     apiKeyAuth:
