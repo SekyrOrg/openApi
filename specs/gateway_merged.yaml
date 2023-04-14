@@ -252,11 +252,18 @@ paths:
   /events/unacknowledged:
     get:
       parameters:
-        - description: which fields to load
+        - description: Array of allowed preload fields
           in: query
           name: load
           schema:
-            type: boolean
+            enum:
+              - HostStats
+              - Interfaces
+              - NetStats
+              - UserStats
+            items:
+              type: string
+            type: array
       responses:
         "200":
           content:
