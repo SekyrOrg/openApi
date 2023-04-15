@@ -977,6 +977,7 @@ components:
     Event:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
+        - type: object
         - properties:
             arguments:
               type: string
@@ -1024,6 +1025,7 @@ components:
     HostStat:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
+        - type: object
         - properties:
             bootTime:
               format: uint64
@@ -1060,6 +1062,7 @@ components:
     Interface:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
+        - type: object
         - properties:
             eventID:
               format: uuid
@@ -1071,6 +1074,7 @@ components:
     NetStat:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
+        - type: object
         - properties:
             eventID:
               format: uuid
@@ -1137,6 +1141,7 @@ components:
     UserStat:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
+        - type: object
         - properties:
             eventID:
               format: uuid
