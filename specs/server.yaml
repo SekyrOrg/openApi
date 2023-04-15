@@ -718,7 +718,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
         - type: object
-        - properties:
+          properties:
             beaconID:
               type: string
               format: uuid
@@ -745,7 +745,7 @@ components:
       allOf:
         - $ref: "#/components/schemas/TenantBaseModel"
         - type: object
-        - properties:
+          properties:
             eventID:
               type: string
               format: uuid
@@ -763,7 +763,7 @@ components:
       allOf:
         - $ref: "#/components/schemas/TenantBaseModel"
         - type: object
-        - properties:
+          properties:
             eventID:
               type: string
               format: uuid
@@ -801,7 +801,7 @@ components:
       allOf:
         - $ref: "#/components/schemas/TenantBaseModel"
         - type: object
-        - properties:
+          properties:
             eventID:
               type: string
               format: uuid
@@ -816,7 +816,7 @@ components:
       allOf:
         - $ref: "#/components/schemas/TenantBaseModel"
         - type: object
-        - properties:
+          properties:
             eventID:
               type: string
               format: uuid
@@ -838,26 +838,7 @@ components:
         required:
             - code
             - message
-  responses:
   requestBodies:
-    Error:
-      description: An error occurred
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              code:
-                type: string
-                example: invalid_request
-                description: A unique error code for the specific type of error
-              message:
-                type: string
-                example: Invalid request parameters
-                description: A human-readable error message describing the error
-            required:
-              - code
-              - message
     CreateRecipient:
       description: Create a new recipient
       content:

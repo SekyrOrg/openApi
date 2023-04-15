@@ -833,24 +833,6 @@ components:
               - contactInfo
             type: object
       description: Create a new recipient
-    Error:
-      content:
-        application/json:
-          schema:
-            properties:
-              code:
-                description: A unique error code for the specific type of error
-                example: invalid_request
-                type: string
-              message:
-                description: A human-readable error message describing the error
-                example: Invalid request parameters
-                type: string
-            required:
-              - code
-              - message
-            type: object
-      description: An error occurred
     UpdateGroup:
       content:
         application/json:
@@ -977,7 +959,6 @@ components:
     Event:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
-        - type: object
         - properties:
             arguments:
               type: string
@@ -1000,6 +981,7 @@ components:
               items:
                 $ref: '#/components/schemas/UserStat'
               type: array
+          type: object
     Group:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
@@ -1025,7 +1007,6 @@ components:
     HostStat:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
-        - type: object
         - properties:
             bootTime:
               format: uint64
@@ -1059,10 +1040,10 @@ components:
               type: string
             virtualizationSystem:
               type: string
+          type: object
     Interface:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
-        - type: object
         - properties:
             eventID:
               format: uuid
@@ -1071,10 +1052,10 @@ components:
               type: string
             name:
               type: string
+          type: object
     NetStat:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
-        - type: object
         - properties:
             eventID:
               format: uuid
@@ -1085,6 +1066,7 @@ components:
               type: string
             status:
               type: string
+          type: object
     Recipient:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
@@ -1141,7 +1123,6 @@ components:
     UserStat:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
-        - type: object
         - properties:
             eventID:
               format: uuid
@@ -1155,6 +1136,7 @@ components:
               type: string
             user:
               type: string
+          type: object
     WsEvent:
       properties:
         content:
