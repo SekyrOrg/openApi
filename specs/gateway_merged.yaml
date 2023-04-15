@@ -177,11 +177,11 @@ paths:
           application/json:
             schema:
               properties:
-                reason:
+                comment:
                   description: The reason or description for acknowledging the events.
                   type: string
               required:
-                - reason
+                - comment
               type: object
         description: The request body for acknowledging events.
         required: true
@@ -252,13 +252,7 @@ paths:
   /events/unacknowledged:
     get:
       parameters:
-        - description: Array of allowed preload fields
-          in: query
-          name: load
-          schema:
-            items:
-              type: string
-            type: array
+        - $ref: '#/components/parameters/Preloads'
       responses:
         "200":
           content:
@@ -700,6 +694,14 @@ components:
       schema:
         example: Windows
         type: string
+    Preloads:
+      description: Array of allowed preload fields
+      in: query
+      name: load
+      schema:
+        items:
+          type: string
+        type: array
     ReportAddr:
       description: The URL of the report server.
       in: query
@@ -896,6 +898,20 @@ components:
             type: object
       description: An error occurred
   schemas:
+    Acknowledgement:
+      allOf:
+        - $ref: '#/components/schemas/TenantBaseModel'
+        - properties:
+            Comment:
+              example: This was tod from accounting...
+              type: string
+            EventId:
+              example: 123e4567-e89b-12d3-a456-426655440000
+              format: uuid
+              type: string
+          required:
+            - EventId
+          type: object
     Beacon:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
@@ -918,7 +934,7 @@ components:
               example: Windows
               type: string
             ReportAddr:
-              example: http://example.com/report
+              example: 127.0.0.1:53
               type: string
             Static:
               example: true
@@ -960,6 +976,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
         - properties:
+            acknowledgement:
+              $ref: '#/components/schemas/Acknowledgement'
             arguments:
               type: string
             beaconID:
@@ -981,6 +999,9 @@ components:
               items:
                 $ref: '#/components/schemas/UserStat'
               type: array
+          required:
+            - beaconID
+            - binaryName
           type: object
     Group:
       allOf:
@@ -1040,6 +1061,21 @@ components:
               type: string
             virtualizationSystem:
               type: string
+          required:
+            - eventID
+            - hostname
+            - uptime
+            - bootTime
+            - procs
+            - os
+            - platform
+            - platformFamily
+            - platformVersion
+            - kernelVersion
+            - kernelArch
+            - virtualizationSystem
+            - virtualizationRole
+            - hostID
           type: object
     Interface:
       allOf:
@@ -1052,6 +1088,10 @@ components:
               type: string
             name:
               type: string
+          required:
+            - eventID
+            - name
+            - ipAddresses
           type: object
     NetStat:
       allOf:
@@ -1066,6 +1106,11 @@ components:
               type: string
             status:
               type: string
+          required:
+            - eventID
+            - remoteAddress
+            - localAddress
+            - status
           type: object
     Recipient:
       allOf:
@@ -1087,6 +1132,10 @@ components:
             Type:
               example: Email
               type: string
+          required:
+            - Name
+            - Type
+            - ContactInfo
           type: object
     TenantBaseModel:
       properties:
@@ -1095,18 +1144,9 @@ components:
           format: date-time
           type: string
         DeletedAt:
-          properties:
-            Deleted:
-              example: true
-              type: boolean
-            Time:
-              example: "2023-03-27T15:00:00Z"
-              format: date-time
-              type: string
-          required:
-            - Time
-            - Deleted
-          type: object
+          example: "2023-03-27T14:00:00Z"
+          format: date-time
+          type: string
         ID:
           example: 123e4567-e89b-12d3-a456-426655440000
           format: uuid
@@ -1119,6 +1159,10 @@ components:
           example: "2023-03-27T14:00:00Z"
           format: date-time
           type: string
+      required:
+        - ID
+        - CreatedAt
+        - UpdatedAt
       type: object
     UserStat:
       allOf:
@@ -1136,6 +1180,12 @@ components:
               type: string
             user:
               type: string
+          required:
+            - eventID
+            - user
+            - terminal
+            - host
+            - started
           type: object
     WsEvent:
       properties:

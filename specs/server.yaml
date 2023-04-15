@@ -35,7 +35,7 @@ paths:
                 $ref: '#/components/schemas/ErrorMsg'
   /beacons/{beaconId}:
     parameters:
-        - $ref: '#/components/parameters/beaconId'
+      - $ref: '#/components/parameters/beaconId'
     get:
       summary: Get a specific beacon by ID
       tags:
@@ -411,7 +411,7 @@ paths:
           content:
             application/json:
               schema:
-               $ref: '#/components/schemas/Group'
+                $ref: '#/components/schemas/Group'
         default:
           description: Error response
           content:
@@ -470,13 +470,7 @@ paths:
       security:
         - bearerAuth: [ ]
       parameters:
-        - name: load
-          in: query
-          description: Array of allowed preload fields
-          schema:
-            type: array
-            items:
-              type: string
+        - $ref: '#/components/parameters/Preloads'
       responses:
         '200':
           description: A list of events unacknowledged events
@@ -515,29 +509,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorMsg'
   /events/{eventId}/recipients:
-        parameters:
-            - $ref: '#/components/parameters/eventId'
-        get:
-          summary: Retrieve a list of recipients for a specific event
-          tags:
-          - events
-          security:
-          - bearerAuth: [ ]
-          responses:
-            '200':
-               description: A list of recipients
-               content:
-                 application/json:
-                   schema:
-                     type: array
-                     items:
-                       $ref: '#/components/schemas/Recipient'
-            default:
-              description: Error response
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/ErrorMsg'
+    parameters:
+      - $ref: '#/components/parameters/eventId'
+    get:
+      summary: Retrieve a list of recipients for a specific event
+      tags:
+        - events
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: A list of recipients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipient'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
   /events/{eventId}/group:
     parameters:
       - $ref: '#/components/parameters/eventId'
@@ -564,37 +558,37 @@ paths:
     parameters:
       - $ref: '#/components/parameters/eventId'
     post:
-        summary: Acknowledge a specific event by ID
-        tags:
-            - events
-        security:
-            - bearerAuth: [ ]
-        requestBody:
-          required: true
-          description: The request body for acknowledging events.
+      summary: Acknowledge a specific event by ID
+      tags:
+        - events
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        description: The request body for acknowledging events.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+                  description: The reason or description for acknowledging the events.
+              required:
+                - comment
+      responses:
+        '200':
+          description: The event was acknowledged
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  reason:
-                    type: string
-                    description: The reason or description for acknowledging the events.
-                required:
-                  - reason
-        responses:
-            '200':
-              description: The event was acknowledged
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/Event'
-            default:
-              description: Error response
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/ErrorMsg'
+                $ref: '#/components/schemas/Event'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
 components:
   securitySchemes:
     apiKeyAuth:
@@ -618,22 +612,17 @@ components:
           format: date-time
           example: '2023-03-27T14:00:00Z'
         DeletedAt:
-          type: object
-          properties:
-            Time:
-              type: string
-              format: date-time
-              example: '2023-03-27T15:00:00Z'
-            Deleted:
-              type: boolean
-              example: true
-          required:
-            - Time
-            - Deleted
+          type: string
+          format: date-time
+          example: '2023-03-27T14:00:00Z'
         TenantID:
           type: string
           format: uuid
           example: 123e4567-e89b-12d3-a456-426655440000
+      required:
+        - ID
+        - CreatedAt
+        - UpdatedAt
     Beacon:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
@@ -670,7 +659,7 @@ components:
               example: http
             ReportAddr:
               type: string
-              example: http://example.com/report
+              example: "127.0.0.1:53"
     Group:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
@@ -714,6 +703,10 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Group'
+          required:
+            - Name
+            - Type
+            - ContactInfo
     Event:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
@@ -740,7 +733,11 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/Interface"
-
+            acknowledgement:
+              $ref: "#/components/schemas/Acknowledgement"
+          required:
+            - beaconID
+            - binaryName
     UserStat:
       allOf:
         - $ref: "#/components/schemas/TenantBaseModel"
@@ -758,7 +755,12 @@ components:
             started:
               type: integer
               format: uint32
-
+          required:
+            - eventID
+            - user
+            - terminal
+            - host
+            - started
     HostStat:
       allOf:
         - $ref: "#/components/schemas/TenantBaseModel"
@@ -796,7 +798,21 @@ components:
               type: string
             hostID:
               type: string
-
+          required:
+            - eventID
+            - hostname
+            - uptime
+            - bootTime
+            - procs
+            - os
+            - platform
+            - platformFamily
+            - platformVersion
+            - kernelVersion
+            - kernelArch
+            - virtualizationSystem
+            - virtualizationRole
+            - hostID
     NetStat:
       allOf:
         - $ref: "#/components/schemas/TenantBaseModel"
@@ -811,7 +827,11 @@ components:
               type: string
             status:
               type: string
-
+          required:
+            - eventID
+            - remoteAddress
+            - localAddress
+            - status
     Interface:
       allOf:
         - $ref: "#/components/schemas/TenantBaseModel"
@@ -824,20 +844,38 @@ components:
               type: string
             ipAddresses:
               type: string
+          required:
+            - eventID
+            - name
+            - ipAddresses
+    Acknowledgement:
+        allOf:
+            - $ref: '#/components/schemas/TenantBaseModel'
+            - type: object
+              properties:
+                EventId:
+                  type: string
+                  format: uuid
+                  example: 123e4567-e89b-12d3-a456-426655440000
+                Comment:
+                  type: string
+                  example: This was tod from accounting...
+              required:
+                - EventId
     ErrorMsg:
-        type: object
-        properties:
-          code:
-            type: string
-            example: invalid_request
-            description: A unique error code for the specific type of error
-          message:
-            type: string
-            example: Invalid request parameters
-            description: A human-readable error message describing the error
-        required:
-            - code
-            - message
+      type: object
+      properties:
+        code:
+          type: string
+          example: invalid_request
+          description: A unique error code for the specific type of error
+        message:
+          type: string
+          example: Invalid request parameters
+          description: A human-readable error message describing the error
+      required:
+        - code
+        - message
   requestBodies:
     CreateRecipient:
       description: Create a new recipient
@@ -935,6 +973,14 @@ components:
                 type: string
                 example: A new description of my resource
   parameters:
+    Preloads:
+      name: load
+      in: query
+      description: Array of allowed preload fields
+      schema:
+        type: array
+        items:
+          type: string
     beaconId:
       name: beaconId
       in: path
@@ -966,12 +1012,12 @@ components:
         description: Unique identifier of the group on UUID format
       example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
     eventId:
-        name: eventId
-        in: path
-        description: The UUID identifier of the event
-        required: true
-        schema:
-          type: string
-          format: uuid
-          description: Unique identifier of the event on UUID format
-        example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+      name: eventId
+      in: path
+      description: The UUID identifier of the event
+      required: true
+      schema:
+        type: string
+        format: uuid
+        description: Unique identifier of the event on UUID format
+      example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
