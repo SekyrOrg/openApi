@@ -10,6 +10,8 @@ tags:
     description: Endpoints related to recipients
   - name: groups
     description: Endpoints related to groups
+  - name: events
+    description: Endpoints related to events
 paths:
   /beacons:
     get:

@@ -1206,6 +1206,8 @@ tags:
     name: recipients
   - description: Endpoints related to groups
     name: groups
+  - description: Endpoints related to events
+    name: events
   - description: API for creating beacons
     name: Creator
   - description: API for checking server health
