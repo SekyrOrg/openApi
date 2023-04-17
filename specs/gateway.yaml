@@ -1,8 +1,7 @@
-
 openapi: 3.0.0
 info:
   title: Gateway API
-  description: A gateway for managing differnt APIs
+  description: A gateway for managing different APIs
   version: 1.0.0
 servers:
   - url: http://127.0.0.1:9000
@@ -11,11 +10,17 @@ paths:
   /ws:
     get:
       summary: Receive events via WebSocket
+      description: Use this endpoint to establish a WebSocket connection and receive events.
       responses:
         '200':
-          description: Successfully connected to the WebSocket
+          description: Successfully connected to the WebSocket.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WsEvent'
       servers:
-        - url: ws://example.com/ws
+        - url: ws://127.0.0.1:9000/ws
+      x-websocket: true
 components:
   schemas:
     WsEvent:
@@ -24,4 +29,37 @@ components:
         content:
           type: string
         type:
+          oneOf:
+            - $ref: '#/components/schemas/BeaconCreated'
+            - $ref: '#/components/schemas/EventCreated'
+    BeaconCreated:
+      type: object
+      properties:
+        BeaconId:
           type: string
+          format: uuid
+        GroupId:
+          type: string
+          format: uuid
+      required:
+        - BeaconId
+        - GroupId
+    EventCreated:
+      type: object
+      properties:
+        EventId:
+          type: string
+          format: uuid
+        BeaconId:
+          type: string
+          format: uuid
+        BinaryName:
+          type: string
+        Arguments:
+          type: string
+        Host:
+          type: string
+      required:
+        - EventId
+        - BeaconId
+        - BinaryName

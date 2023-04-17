@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  description: A gateway for managing differnt APIs
+  description: A gateway for managing different APIs
   title: Gateway API
   version: 1.0.0
 paths:
@@ -638,12 +638,18 @@ paths:
         - recipients
   /ws:
     get:
+      description: Use this endpoint to establish a WebSocket connection and receive events.
       responses:
         "200":
-          description: Successfully connected to the WebSocket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WsEvent'
+          description: Successfully connected to the WebSocket.
       servers:
-        - url: ws://example.com/ws
+        - url: ws://127.0.0.1:9000/ws
       summary: Receive events via WebSocket
+      x-websocket: true
 components:
   parameters:
     Arch:
@@ -949,6 +955,18 @@ components:
               example: 9
               type: integer
           type: object
+    BeaconCreated:
+      properties:
+        BeaconId:
+          format: uuid
+          type: string
+        GroupId:
+          format: uuid
+          type: string
+      required:
+        - BeaconId
+        - GroupId
+      type: object
     Dist:
       properties:
         arch:
@@ -1003,6 +1021,25 @@ components:
             - beaconID
             - binaryName
           type: object
+    EventCreated:
+      properties:
+        Arguments:
+          type: string
+        BeaconId:
+          format: uuid
+          type: string
+        BinaryName:
+          type: string
+        EventId:
+          format: uuid
+          type: string
+        Host:
+          type: string
+      required:
+        - EventId
+        - BeaconId
+        - BinaryName
+      type: object
     Group:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
@@ -1192,7 +1229,9 @@ components:
         content:
           type: string
         type:
-          type: string
+          oneOf:
+            - $ref: '#/components/schemas/BeaconCreated'
+            - $ref: '#/components/schemas/EventCreated'
       type: object
   securitySchemes:
     apiKeyAuth:
