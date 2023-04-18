@@ -48,19 +48,11 @@ paths:
             - $ref: '#/components/parameters/Transport'
       requestBody:
         required: true
-        content:
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
+        $ref: '#/components/requestBodies/BinaryFile'
       responses:
         '200':
-          description: A beacon created from the submitted binary
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
+          required: true
+          $ref: '#/components/responses/Beacon'
         default:
           $ref: '#/components/responses/Error'
   /healthz:
@@ -89,6 +81,14 @@ components:
       type: apiKey
       in: header
       name: X-API-Key
+  requestBodies:
+    BinaryFile:
+      description: A beacon
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
   parameters:
     ReportAddr:
       name: report_addr
@@ -180,23 +180,18 @@ components:
         example: http
   responses:
     Error:
-      description: An error occurred
+      description: Error response
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              code:
-                type: string
-                example: invalid_request
-                description: A unique error code for the specific type of error
-              message:
-                type: string
-                example: Invalid request parameters
-                description: A human-readable error message describing the error
-            required:
-              - code
-              - message
+            $ref: '#/components/schemas/ErrorMsg'
+    Beacon:
+      description: A beacon
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
   schemas:
     Dist:
       type: object
@@ -207,3 +202,17 @@ components:
         arch:
           type: string
           example: x86_64
+    ErrorMsg:
+      type: object
+      properties:
+        code:
+          type: string
+          example: invalid_request
+          description: A unique error code for the specific type of error
+        message:
+          type: string
+          example: Invalid request parameters
+          description: A human-readable error message describing the error
+      required:
+        - code
+        - message

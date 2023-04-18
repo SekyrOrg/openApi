@@ -6,6 +6,9 @@ info:
 servers:
   - url: http://127.0.0.1:9000
     description: The API server
+tags:
+  - name: WebSocket
+    description: WebSocket API
 paths:
   /ws:
     get:
@@ -21,10 +24,13 @@ paths:
       servers:
         - url: ws://127.0.0.1:9000/ws
       x-websocket: true
+      tags:
+        - WebSocket
 components:
   schemas:
     WsEvent:
       type: object
+      description: A WebSocket event.
       properties:
         content:
           type: string
@@ -34,6 +40,7 @@ components:
             - $ref: '#/components/schemas/EventCreated'
     BeaconCreated:
       type: object
+      description: A beacon was created.
       properties:
         BeaconId:
           type: string
@@ -46,6 +53,7 @@ components:
         - GroupId
     EventCreated:
       type: object
+      description: An event was created by a beacon.
       properties:
         EventId:
           type: string

@@ -36,11 +36,7 @@ paths:
                 $ref: '#/components/schemas/Beacon'
           description: The beacon
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Get a specific beacon by ID
@@ -63,20 +59,12 @@ paths:
         - $ref: '#/components/parameters/Lldflags'
         - $ref: '#/components/parameters/Transport'
       requestBody:
-        content:
-          application/octet-stream:
-            schema:
-              format: binary
-              type: string
+        $ref: '#/components/requestBodies/BinaryFile'
         required: true
       responses:
         "200":
-          content:
-            application/octet-stream:
-              schema:
-                format: binary
-                type: string
-          description: A beacon created from the submitted binary
+          $ref: '#/components/responses/Beacon'
+          required: true
         default:
           $ref: '#/components/responses/Error'
       security:
@@ -114,11 +102,7 @@ paths:
                 type: array
           description: A list of events
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: List all events
@@ -136,11 +120,7 @@ paths:
         "201":
           description: The created event
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Create a new event
@@ -156,11 +136,7 @@ paths:
                 $ref: '#/components/schemas/Event'
           description: The event
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Retrieve a specific event by ID
@@ -193,11 +169,7 @@ paths:
                 $ref: '#/components/schemas/Acknowledgement'
           description: The event was acknowledged
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Acknowledge a specific event by ID
@@ -213,11 +185,7 @@ paths:
                 $ref: '#/components/schemas/Group'
           description: The group
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Retrieve the group for a specific event
@@ -237,11 +205,7 @@ paths:
                 type: array
           description: A list of recipients
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Retrieve a list of recipients for a specific event
@@ -263,11 +227,7 @@ paths:
                 type: array
           description: A list of events unacknowledged events
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: List all events unacknowledged events
@@ -285,11 +245,7 @@ paths:
                 type: array
           description: A list of groups
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: List all groups
@@ -307,11 +263,7 @@ paths:
                 $ref: '#/components/schemas/Group'
           description: The created group
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       summary: Create a new group
       tags:
         - groups
@@ -321,11 +273,7 @@ paths:
         "204":
           description: No Content
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Delete a group by ID
@@ -340,11 +288,7 @@ paths:
                 $ref: '#/components/schemas/Group'
           description: The group
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Retrieve a specific group by ID
@@ -353,6 +297,7 @@ paths:
     parameters:
       - $ref: '#/components/parameters/groupId'
     put:
+      $ref: '#/components/responses/Error'
       requestBody:
         $ref: '#/components/requestBodies/UpdateGroup'
         required: true
@@ -363,12 +308,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Group'
           description: The updated group
-        default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+        default: null
       security:
         - bearerAuth: []
       summary: Update a group's name, description, and recipient list
@@ -384,11 +324,7 @@ paths:
                 type: integer
           description: The number of beacons in the group
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Get the number of beacons in a group
@@ -406,11 +342,7 @@ paths:
                 type: integer
           description: The number of events in the group
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Get the number of events in a group
@@ -428,11 +360,7 @@ paths:
                 type: integer
           description: The number of recipients in the group
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Get the number of recipients in a group
@@ -452,11 +380,7 @@ paths:
                 type: array
           description: A list of events
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: List all events for a group
@@ -476,11 +400,7 @@ paths:
                   type: array
           description: A list of recipients
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: List all recipients for a group
@@ -500,11 +420,7 @@ paths:
                 $ref: '#/components/schemas/Group'
           description: A list of recipients ids
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Add a list of recipients to a group
@@ -520,11 +436,7 @@ paths:
                 $ref: '#/components/schemas/Group'
           description: The recipient was removed from the group
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Remove a recipient from a group
@@ -545,11 +457,7 @@ paths:
                 type: array
           description: A list of recipients
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: List all recipients
@@ -567,11 +475,7 @@ paths:
                 $ref: '#/components/schemas/Recipient'
           description: The created recipient
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Create a new recipient
@@ -583,11 +487,7 @@ paths:
         "204":
           description: The recipient was deleted successfully
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Delete a recipient by ID
@@ -602,11 +502,7 @@ paths:
                 $ref: '#/components/schemas/Recipient'
           description: The recipient
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Get a specific recipient by ID
@@ -626,11 +522,7 @@ paths:
                 $ref: '#/components/schemas/Recipient'
           description: The updated recipient
         default:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMsg'
-          description: Error response
+          $ref: '#/components/responses/Error'
       security:
         - bearerAuth: []
       summary: Update an existing recipient
@@ -649,6 +541,8 @@ paths:
       servers:
         - url: ws://127.0.0.1:9000/ws
       summary: Receive events via WebSocket
+      tags:
+        - WebSocket
       x-websocket: true
 components:
   parameters:
@@ -798,6 +692,13 @@ components:
               type: string
             type: array
       description: Add recipients to a group
+    BinaryFile:
+      content:
+        application/octet-stream:
+          schema:
+            format: binary
+            type: string
+      description: A beacon
     CreateGroup:
       content:
         application/json:
@@ -885,24 +786,19 @@ components:
             type: object
       description: Update an existing recipient
   responses:
+    Beacon:
+      content:
+        application/octet-stream:
+          schema:
+            format: binary
+            type: string
+      description: A beacon
     Error:
       content:
         application/json:
           schema:
-            properties:
-              code:
-                description: A unique error code for the specific type of error
-                example: invalid_request
-                type: string
-              message:
-                description: A human-readable error message describing the error
-                example: Invalid request parameters
-                type: string
-            required:
-              - code
-              - message
-            type: object
-      description: An error occurred
+            $ref: '#/components/schemas/ErrorMsg'
+      description: Error response
   schemas:
     Acknowledgement:
       allOf:
@@ -956,6 +852,7 @@ components:
               type: integer
           type: object
     BeaconCreated:
+      description: A beacon was created.
       properties:
         BeaconId:
           format: uuid
@@ -1022,6 +919,7 @@ components:
             - binaryName
           type: object
     EventCreated:
+      description: An event was created by a beacon.
       properties:
         Arguments:
           type: string
@@ -1225,6 +1123,7 @@ components:
             - started
           type: object
     WsEvent:
+      description: A WebSocket event.
       properties:
         content:
           type: string
@@ -1239,6 +1138,8 @@ components:
       name: X-API-Key
       type: apiKey
 tags:
+  - description: WebSocket API
+    name: WebSocket
   - description: Endpoints related to beacons
     name: beacons
   - description: Endpoints related to recipients
