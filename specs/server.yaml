@@ -205,7 +205,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Group'
         default:
-      $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/Error'
     delete:
       summary: Delete a group by ID
       tags:
@@ -493,6 +493,10 @@ paths:
           $ref: '#/components/responses/Error'
 components:
   securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
     apiKeyAuth:
       type: apiKey
       in: header
