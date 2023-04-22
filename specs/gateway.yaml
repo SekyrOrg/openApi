@@ -4,8 +4,10 @@ info:
   description: A gateway for managing different APIs
   version: 1.0.0
 servers:
+  - url: https://gateway.sekyr.com
+    description: The production API server
   - url: http://127.0.0.1:9000
-    description: The API server
+    description: The local API server for development
 tags:
   - name: WebSocket
     description: WebSocket API

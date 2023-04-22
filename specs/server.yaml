@@ -303,9 +303,9 @@ paths:
           content:
             application/json:
               schema:
+                type: array
                 items:
                   $ref: '#/components/schemas/Recipient'
-                  type: array
           description: A list of recipients
         default:
           $ref: '#/components/responses/Error'

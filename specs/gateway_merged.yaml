@@ -397,7 +397,7 @@ paths:
               schema:
                 items:
                   $ref: '#/components/schemas/Recipient'
-                  type: array
+                type: array
           description: A list of recipients
         default:
           $ref: '#/components/responses/Error'
@@ -1157,5 +1157,7 @@ tags:
   - description: API for checking server health
     name: Health
 servers:
-  - description: The API server
+  - description: The production API server
+    url: https://gateway.sekyr.com
+  - description: The local API server for development
     url: http://127.0.0.1:9000
