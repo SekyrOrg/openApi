@@ -216,7 +216,7 @@ paths:
   /events/unacknowledged:
     get:
       parameters:
-        - $ref: '#/components/parameters/Preloads'
+        - $ref: '#/components/parameters/preloads'
       responses:
         "200":
           content:
@@ -280,6 +280,8 @@ paths:
       tags:
         - groups
     get:
+      parameters:
+        - $ref: '#/components/parameters/preloads'
       responses:
         "200":
           content:
@@ -594,14 +596,6 @@ components:
       schema:
         example: Windows
         type: string
-    Preloads:
-      description: Array of allowed preload fields
-      in: query
-      name: load
-      schema:
-        items:
-          type: string
-        type: array
     ReportAddr:
       description: The URL of the report server.
       in: query
@@ -672,6 +666,14 @@ components:
         description: Unique identifier of the group on UUID format
         format: uuid
         type: string
+    preloads:
+      description: Array of allowed preload fields
+      in: query
+      name: load
+      schema:
+        items:
+          type: string
+        type: array
     recipientId:
       description: The UUID identifier of the recipient
       example: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
