@@ -1052,6 +1052,7 @@ components:
     Recipient:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/RecipientError'
         - properties:
             ContactInfo:
               example: test@example.com
@@ -1073,6 +1074,18 @@ components:
             - Name
             - Type
             - ContactInfo
+          type: object
+    RecipientError:
+      allOf:
+        - $ref: '#/components/schemas/TenantBaseModel'
+        - properties:
+            ErrorMessage:
+              example: Webhook failed with status code 404
+              type: string
+            RecipientID:
+              example: 123e4567-e89b-12d3-a456-426655440000
+              format: uuid
+              type: string
           type: object
     TenantBaseModel:
       properties:
