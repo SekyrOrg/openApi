@@ -500,6 +500,26 @@ paths:
       summary: Update an existing recipient
       tags:
         - recipients
+  /recipients/{recipientId}/errors:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/RecipientError'
+                type: array
+          description: A list of errors
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+        - bearerAuth: []
+      summary: Get a list of errors for a specific recipient
+      tags:
+        - recipients
+    parameters:
+      - $ref: '#/components/parameters/recipientId'
   /ws:
     get:
       description: Use this endpoint to establish a WebSocket connection and receive events.
