@@ -197,13 +197,7 @@ paths:
     get:
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/Recipient'
-                type: array
-          description: A list of recipients
+          $ref: '#/components/responses/RecipientListResponse'
         default:
           $ref: '#/components/responses/Error'
       security:
@@ -394,13 +388,7 @@ paths:
     get:
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/Recipient'
-                type: array
-          description: A list of recipients
+          $ref: '#/components/responses/RecipientListResponse'
         default:
           $ref: '#/components/responses/Error'
       security:
@@ -451,13 +439,7 @@ paths:
     get:
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/Recipient'
-                type: array
-          description: A list of recipients
+          $ref: '#/components/responses/RecipientListResponse'
         default:
           $ref: '#/components/responses/Error'
       security:
@@ -471,11 +453,7 @@ paths:
         required: true
       responses:
         "201":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Recipient'
-          description: The created recipient
+          $ref: '#/components/responses/RecipientResponse'
         default:
           $ref: '#/components/responses/Error'
       security:
@@ -498,11 +476,7 @@ paths:
     get:
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Recipient'
-          description: The recipient
+          $ref: '#/components/responses/RecipientResponse'
         default:
           $ref: '#/components/responses/Error'
       security:
@@ -518,11 +492,7 @@ paths:
         required: true
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Recipient'
-          description: The updated recipient
+          $ref: '#/components/responses/RecipientResponse'
         default:
           $ref: '#/components/responses/Error'
       security:
@@ -801,10 +771,24 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMsg'
       description: Error response
+    RecipientListResponse:
+      content:
+        application/json:
+          schema:
+            items:
+              $ref: '#/components/schemas/Recipient'
+            type: array
+      description: a list of recipients
+    RecipientResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Recipient'
+      description: A recipient response
   schemas:
     Acknowledgement:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - properties:
             Comment:
               example: This was tod from accounting...
@@ -815,17 +799,37 @@ components:
               type: string
           required:
             - EventId
+            - Comment
           type: object
+    BaseModel:
+      properties:
+        CreatedAt:
+          example: "2023-03-27T13:00:00Z"
+          format: date-time
+          type: string
+        DeletedAt:
+          example: "2023-03-27T14:00:00Z"
+          format: date-time
+          type: string
+        ID:
+          example: 123e4567-e89b-12d3-a456-426655440000
+          format: uuid
+          type: string
+        UpdatedAt:
+          example: "2023-03-27T14:00:00Z"
+          format: date-time
+          type: string
+      required:
+        - ID
+        - CreatedAt
+        - UpdatedAt
+      type: object
     Beacon:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - properties:
             Arch:
               example: x86_64
-              type: string
-            BeaconId:
-              example: 123e4567-e89b-12d3-a456-426655440000
-              format: uuid
               type: string
             GroupId:
               example: 123e4567-e89b-12d3-a456-426655440000
@@ -852,6 +856,17 @@ components:
             UpxLevel:
               example: 9
               type: integer
+          required:
+            - BeaconId
+            - GroupId
+            - ReportAddr
+            - Transport
+            - OS
+            - Arch
+            - Static
+            - Upx
+            - UpxLevel
+            - Gzip
           type: object
     BeaconCreated:
       description: A beacon was created.
@@ -891,7 +906,7 @@ components:
       type: object
     Event:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - properties:
             acknowledgement:
               $ref: '#/components/schemas/Acknowledgement'
@@ -919,6 +934,7 @@ components:
           required:
             - beaconID
             - binaryName
+            - arguments
           type: object
     EventCreated:
       description: An event was created by a beacon.
@@ -942,7 +958,7 @@ components:
       type: object
     Group:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - properties:
             Beacons:
               items:
@@ -954,17 +970,18 @@ components:
             Name:
               example: Test Group
               type: string
-            Priority:
-              example: 1
-              type: integer
             Recipients:
               items:
                 $ref: '#/components/schemas/Recipient'
               type: array
+          required:
+            - Name
+            - Recipients
+            - Description
           type: object
     HostStat:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - properties:
             bootTime:
               format: uint64
@@ -1016,7 +1033,7 @@ components:
           type: object
     Interface:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - properties:
             eventID:
               format: uuid
@@ -1032,7 +1049,7 @@ components:
           type: object
     NetStat:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - properties:
             eventID:
               format: uuid
@@ -1051,7 +1068,7 @@ components:
           type: object
     Recipient:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - properties:
             ContactInfo:
               example: test@example.com
@@ -1077,10 +1094,12 @@ components:
             - Name
             - Type
             - ContactInfo
+            - Groups
+            - Errors
           type: object
     RecipientError:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - properties:
             ErrorMessage:
               example: Webhook failed with status code 404
@@ -1093,36 +1112,9 @@ components:
             - RecipientID
             - ErrorMessage
           type: object
-    TenantBaseModel:
-      properties:
-        CreatedAt:
-          example: "2023-03-27T13:00:00Z"
-          format: date-time
-          type: string
-        DeletedAt:
-          example: "2023-03-27T14:00:00Z"
-          format: date-time
-          type: string
-        ID:
-          example: 123e4567-e89b-12d3-a456-426655440000
-          format: uuid
-          type: string
-        TenantID:
-          example: 123e4567-e89b-12d3-a456-426655440000
-          format: uuid
-          type: string
-        UpdatedAt:
-          example: "2023-03-27T14:00:00Z"
-          format: date-time
-          type: string
-      required:
-        - ID
-        - CreatedAt
-        - UpdatedAt
-      type: object
     UserStat:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - properties:
             eventID:
               format: uuid

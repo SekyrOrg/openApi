@@ -62,13 +62,7 @@ paths:
         - bearerAuth: [ ]
       responses:
         '200':
-          description: A list of recipients
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Recipient'
+          $ref: '#/components/responses/RecipientListResponse'
         default:
           $ref: '#/components/responses/Error'
     post:
@@ -82,11 +76,7 @@ paths:
         $ref: '#/components/requestBodies/CreateRecipient'
       responses:
         '201':
-          description: The created recipient
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Recipient'
+          $ref: '#/components/responses/RecipientResponse'
         default:
           $ref: '#/components/responses/Error'
   /recipients/{recipientId}:
@@ -100,11 +90,7 @@ paths:
         - bearerAuth: [ ]
       responses:
         '200':
-          description: The recipient
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Recipient'
+          $ref: '#/components/responses/RecipientResponse'
         default:
           $ref: '#/components/responses/Error'
     put:
@@ -118,11 +104,7 @@ paths:
         $ref: '#/components/requestBodies/UpdateRecipient'
       responses:
         '200':
-          description: The updated recipient
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Recipient'
+          $ref: '#/components/responses/RecipientResponse'
         default:
           $ref: '#/components/responses/Error'
     delete:
@@ -302,13 +284,7 @@ paths:
         - groups
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Recipient'
-          description: A list of recipients
+          $ref: '#/components/responses/RecipientListResponse'
         default:
           $ref: '#/components/responses/Error'
       security:
@@ -435,13 +411,7 @@ paths:
         - bearerAuth: [ ]
       responses:
         '200':
-          description: A list of recipients
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Recipient'
+          $ref: '#/components/responses/RecipientListResponse'
         default:
           $ref: '#/components/responses/Error'
   /events/{eventId}/group:
@@ -504,7 +474,7 @@ components:
       in: header
       name: X-API-Key
   schemas:
-    TenantBaseModel:
+    BaseModel:
       type: object
       properties:
         ID:
@@ -523,23 +493,15 @@ components:
           type: string
           format: date-time
           example: '2023-03-27T14:00:00Z'
-        TenantID:
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426655440000
       required:
         - ID
         - CreatedAt
         - UpdatedAt
     Beacon:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - type: object
           properties:
-            BeaconId:
-              type: string
-              format: uuid
-              example: 123e4567-e89b-12d3-a456-426655440000
             GroupId:
               type: string
               format: uuid
@@ -568,9 +530,20 @@ components:
             ReportAddr:
               type: string
               example: "127.0.0.1:53"
+          required:
+            - BeaconId
+            - GroupId
+            - ReportAddr
+            - Transport
+            - OS
+            - Arch
+            - Static
+            - Upx
+            - UpxLevel
+            - Gzip
     Group:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - type: object
           properties:
             Name:
@@ -579,9 +552,6 @@ components:
             Description:
               type: string
               example: A group for testing
-            Priority:
-              type: integer
-              example: 1
             Beacons:
               type: array
               items:
@@ -590,9 +560,13 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Recipient'
+          required:
+            - Name
+            - Recipients
+            - Description
     Recipient:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - type: object
           properties:
             Name:
@@ -619,9 +593,11 @@ components:
             - Name
             - Type
             - ContactInfo
+            - Groups
+            - Errors
     RecipientError:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - type: object
           properties:
             RecipientID:
@@ -636,7 +612,7 @@ components:
             - ErrorMessage
     Event:
       allOf:
-        - $ref: '#/components/schemas/TenantBaseModel'
+        - $ref: '#/components/schemas/BaseModel'
         - type: object
           properties:
             beaconID:
@@ -665,9 +641,10 @@ components:
           required:
             - beaconID
             - binaryName
+            - arguments
     UserStat:
       allOf:
-        - $ref: "#/components/schemas/TenantBaseModel"
+        - $ref: "#/components/schemas/BaseModel"
         - type: object
           properties:
             eventID:
@@ -690,7 +667,7 @@ components:
             - started
     HostStat:
       allOf:
-        - $ref: "#/components/schemas/TenantBaseModel"
+        - $ref: "#/components/schemas/BaseModel"
         - type: object
           properties:
             eventID:
@@ -742,7 +719,7 @@ components:
             - hostID
     NetStat:
       allOf:
-        - $ref: "#/components/schemas/TenantBaseModel"
+        - $ref: "#/components/schemas/BaseModel"
         - type: object
           properties:
             eventID:
@@ -761,7 +738,7 @@ components:
             - status
     Interface:
       allOf:
-        - $ref: "#/components/schemas/TenantBaseModel"
+        - $ref: "#/components/schemas/BaseModel"
         - type: object
           properties:
             eventID:
@@ -777,7 +754,7 @@ components:
             - ipAddresses
     Acknowledgement:
         allOf:
-            - $ref: '#/components/schemas/TenantBaseModel'
+            - $ref: '#/components/schemas/BaseModel'
             - type: object
               properties:
                 EventId:
@@ -789,6 +766,7 @@ components:
                   example: This was tod from accounting...
               required:
                 - EventId
+                - Comment
     ErrorMsg:
       type: object
       properties:
@@ -804,6 +782,20 @@ components:
         - code
         - message
   responses:
+    RecipientResponse:
+        description: A recipient response
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/Recipient'
+    RecipientListResponse:
+        description: a list of recipients
+        content:
+          application/json:
+            schema:
+                type: array
+                items:
+                    $ref: '#/components/schemas/Recipient'
     Error:
       description: Error response
       content:
