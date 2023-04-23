@@ -1052,7 +1052,6 @@ components:
     Recipient:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
-        - $ref: '#/components/schemas/RecipientError'
         - properties:
             ContactInfo:
               example: test@example.com
@@ -1060,6 +1059,10 @@ components:
             Description:
               example: A recipient for testing
               type: string
+            Errors:
+              items:
+                $ref: '#/components/schemas/RecipientError'
+              type: array
             Groups:
               items:
                 $ref: '#/components/schemas/Group'

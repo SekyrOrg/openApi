@@ -593,7 +593,6 @@ components:
     Recipient:
       allOf:
         - $ref: '#/components/schemas/TenantBaseModel'
-        - $ref: '#/components/schemas/RecipientError'
         - type: object
           properties:
             Name:
@@ -612,6 +611,10 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Group'
+            Errors:
+              type: array
+              items:
+                $ref: '#/components/schemas/RecipientError'
           required:
             - Name
             - Type
