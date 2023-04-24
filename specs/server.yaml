@@ -94,6 +94,8 @@ paths:
         default:
           $ref: '#/components/responses/Error'
     put:
+      parameters:
+        - $ref: '#/components/parameters/recipientId'
       summary: Update an existing recipient
       tags:
         - recipients
@@ -108,6 +110,8 @@ paths:
         default:
           $ref: '#/components/responses/Error'
     delete:
+      parameters:
+        - $ref: '#/components/parameters/recipientId'
       summary: Delete a recipient by ID
       tags:
         - recipients
@@ -611,6 +615,7 @@ components:
                 $ref: '#/components/schemas/RecipientError'
           required:
             - Name
+            - Description
             - Type
             - ContactInfo
             - Groups
