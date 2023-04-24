@@ -463,8 +463,6 @@ paths:
         - recipients
   /recipients/{recipientId}:
     delete:
-      parameters:
-        - $ref: '#/components/parameters/recipientId'
       responses:
         "204":
           description: The recipient was deleted successfully
@@ -489,8 +487,6 @@ paths:
     parameters:
       - $ref: '#/components/parameters/recipientId'
     put:
-      parameters:
-        - $ref: '#/components/parameters/recipientId'
       requestBody:
         $ref: '#/components/requestBodies/UpdateRecipient'
         required: true
