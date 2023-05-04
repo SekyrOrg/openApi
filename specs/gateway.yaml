@@ -40,6 +40,7 @@ components:
           oneOf:
             - $ref: '#/components/schemas/BeaconCreated'
             - $ref: '#/components/schemas/EventCreated'
+            - $ref: '#/components/schemas/RecipientError'
     BeaconCreated:
       type: object
       description: A beacon was created.
@@ -73,3 +74,19 @@ components:
         - EventId
         - BeaconId
         - BinaryName
+    RecipientError:
+      type: object
+      description: An error occurred while sending an event to a recipient.
+      properties:
+        RecipientErrorId:
+          type: string
+          format: uuid
+        RecipientId:
+          type: string
+          format: uuid
+        Error:
+          type: string
+      required:
+        - RecipientErrorId
+        - RecipientId
+        - Error
