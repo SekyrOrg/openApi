@@ -1133,6 +1133,7 @@ components:
             - RecipientID
             - ErrorMessage
           type: object
+    RecipientErrorCreated:
       description: An error occurred while sending an event to a recipient.
       properties:
         Error:
@@ -1180,7 +1181,7 @@ components:
           oneOf:
             - $ref: '#/components/schemas/BeaconCreated'
             - $ref: '#/components/schemas/EventCreated'
-            - $ref: '#/components/schemas/RecipientError'
+            - $ref: '#/components/schemas/RecipientErrorCreated'
       type: object
   securitySchemes:
     apiKeyAuth:
